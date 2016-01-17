@@ -1,4 +1,5 @@
-resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+resolvers ++= Seq("Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2",
+                   "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/")
 
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 
