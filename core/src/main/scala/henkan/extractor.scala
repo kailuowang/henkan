@@ -7,7 +7,6 @@ import henkan.FieldReader.FieldName
 import shapeless._
 import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
-import shapeless.ops.record.Values
 
 trait Extractor[F[_], S, T] {
   def apply(): Kleisli[F, S, T]
@@ -48,14 +47,19 @@ object Extractor {
 
   object FieldExtractor {
 
-    implicit def mkFieldExtractor[F[_], S, T](implicit fr: FieldReader[F, S, T]): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
+    implicit def mkFieldExtractor[F[_], S, T](
+      implicit
+      fr: FieldReader[F, S, T]
+    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
       def apply(fieldName: FieldName) = fr.apply(fieldName)
     }
 
-    implicit def recursiveFieldExtractor[FH, F[_], S, T](implicit
+    implicit def recursiveFieldExtractor[FH, F[_], S, T](
+      implicit
       ex: Extractor[F, S, T],
       un: Unapply.Aux1[FlatMap, FH, F, F[S]],
-      decomposer: Decomposer[F, S]): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
+      decomposer: Decomposer[F, S]
+    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
 
       def apply(fieldName: FieldName): Kleisli[F, S, T] = Kleisli(
         s ⇒ {
@@ -69,7 +73,10 @@ object Extractor {
 
   object fieldExtractorMapper extends Poly1 {
 
-    implicit def caseField[K <: Symbol, V, S, F[_]](implicit fr: FieldExtractor[F, S, V]) = at[FieldDef[K, V]] { f ⇒
+    implicit def caseField[K <: Symbol, V, S, F[_]](
+      implicit
+      fr: FieldExtractor[F, S, V]
+    ) = at[FieldDef[K, V]] { f ⇒
       import labelled.field
       field[K](fr(f.name))
     }
@@ -94,16 +101,6 @@ object Extractor {
 
   def apply[F[_], S, T](implicit ex: Extractor[F, S, T]): Extractor[F, S, T] = ex
 
-  class extractC[F[_], T]() {
-    def apply[S](s: S)(implicit e: Extractor[F, S, T]): F[T] = e.extract(s)
-  }
-
-  def extract[F[_], T] = new extractC[F, T]
-
-}
-
-trait FieldReader[F[_], S, T] extends Function1[FieldName, Kleisli[F, S, T]] {
-  def apply(fieldName: FieldName): Kleisli[F, S, T]
 }
 
 trait Decomposer[F[_], S] extends Function2[S, FieldName, F[S]] {
@@ -116,10 +113,23 @@ object Decomposer {
   }
 }
 
+trait FieldReader[F[_], S, T] extends Function1[FieldName, Kleisli[F, S, T]] {
+  def apply(fieldName: FieldName): Kleisli[F, S, T]
+}
+
 object FieldReader {
   type FieldName = String
   def apply[F[_], S, T](f: (S, FieldName) ⇒ F[T]) = new FieldReader[F, S, T] {
     def apply(fieldName: FieldName): Kleisli[F, S, T] =
       Kleisli(s ⇒ f(s, fieldName))
   }
+}
+
+trait ExtractorSyntax {
+
+  class extractC[F[_], T]() {
+    def apply[S](s: S)(implicit e: Extractor[F, S, T]): F[T] = e.extract(s)
+  }
+
+  def extract[F[_], T] = new extractC[F, T]
 }
