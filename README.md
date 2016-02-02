@@ -13,7 +13,7 @@ Pre-alpha phase.
 
 ### First working example, transform between Map and case class
 
-```
+```scala
 import cats.implicits._
 
 import scala.util.Try
@@ -25,7 +25,7 @@ case class MyClass(foo: String, bar: Int)
 
 case class MyParent(foo1: String, child: MyClass)
 
-//now lets write some primitive readers
+//now lets write some primitive readers, note that it 's you that dictate the source type `Map[String, Any]` and High kinded container type `Option`, Henkan takes types that you can provide `FieldReader` with
 
 def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
@@ -36,8 +36,6 @@ implicit val fint = myFieldReader[Int]
 implicit val fString = myFieldReader[String]
 
 //now you can extract your case class from Map[String, Any]
-
-
 
 val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 
