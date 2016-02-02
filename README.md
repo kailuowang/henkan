@@ -1,13 +1,46 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/YOUR_CODACY_TOKEN)](https://www.codacy.com/app/kailuo-wang/henkan)
-[![Codacy Badge](https://api.codacy.com/project/badge/coverage/YOUR_CODACY_TOKEN)](https://www.codacy.com/app/kailuo-wang/henkan)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
+[![Codacy Badge](https://api.codacy.com/project/badge/coverage/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [![Stories in Ready](https://badge.waffle.io/kailuowang/henkan.svg?label=ready&title=Ready)](http://waffle.io/kailuowang/henkan)
 
 
-## TODOs after creation
-* add project at [travis](http://travis-ci.org)
-* add project to [codacy](http://www.codacy.com)
-* add CODACY_PROJECT_TOKEN to travis settings
-* add CODACY_PROJECT_TOKEN to the codacy badges above
-* import [codacy-patterns](https://raw.githubusercontent.com/iheartradio/iHeartOSS.g8/master/codacy-configs/codacy-conf.json) on codacys
-* add project at waffle
+# Henkan [変換]
+
+A tiny library that provides generic and yet typesafe transformation between runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) and case classes.
+
+
+Pre-alpha phase.
+
+### First working example, transform between Map and case class
+
+```
+import cats.implicits._
+
+import scala.util.Try
+
+import henkan._
+
+//suppose you have
+case class MyClass(foo: String, bar: Int)
+
+case class MyParent(foo1: String, child: MyClass)
+
+//now lets write some primitive readers
+
+def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
+
+def myFieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
+  m.get(field).flatMap(safeCast[T])
+}
+implicit val fint = myFieldReader[Int]
+implicit val fString = myFieldReader[String]
+
+//now you can extract your case class from Map[String, Any]
+
+
+
+val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
+
+extract[Option, MyParent](data) // returns Some(MyParent("parent", MyClass("a", 2)))
+
+```
