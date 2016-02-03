@@ -54,10 +54,10 @@ object Extractor {
       def apply(fieldName: FieldName) = fr.apply(fieldName)
     }
 
-    implicit def recursiveFieldExtractor[FH, F[_], S, T](
+    implicit def recursiveFieldExtractor[F[_], S, T](
       implicit
       ex: Extractor[F, S, T],
-      un: Unapply.Aux1[FlatMap, FH, F, F[S]],
+      un: Unapply.Aux1[FlatMap, F[S], F, S],
       decomposer: Decomposer[F, S]
     ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
 
@@ -83,13 +83,13 @@ object Extractor {
 
   }
 
-  implicit def mkExtractor[FH, F[_], S, T, Repr <: HList, FDs <: HList, ReprKleisli <: HList](
+  implicit def mkExtractor[F[_], S, T, Repr <: HList, FDs <: HList, ReprKleisli <: HList](
     implicit
     gen: LabelledGeneric.Aux[T, Repr],
     fds: FieldDefs.Aux[Repr, FDs],
     mapper: Mapper.Aux[fieldExtractorMapper.type, FDs, ReprKleisli],
     sequencer: RecordSequencer.Aux[ReprKleisli, Kleisli[F, S, Repr]],
-    un: Unapply.Aux1[Functor, FH, F, F[S]]
+    un: Unapply.Aux1[Functor, F[Repr], F, Repr]
   ): Extractor[F, S, T] = new Extractor[F, S, T] {
 
     def apply(): Kleisli[F, S, T] = {
