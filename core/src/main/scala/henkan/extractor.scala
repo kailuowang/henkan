@@ -68,7 +68,6 @@ object Extractor {
         }
       )
     }
-
   }
 
   object fieldExtractorMapper extends Poly1 {
@@ -103,9 +102,7 @@ object Extractor {
 
 }
 
-trait Decomposer[F[_], S] extends Function2[S, FieldName, F[S]] {
-  def apply(s: S, fieldName: FieldName): F[S]
-}
+trait Decomposer[F[_], S] extends ((S, FieldName) ⇒ F[S])
 
 object Decomposer {
   def apply[F[_], S](f: (S, FieldName) ⇒ F[S]): Decomposer[F, S] = new Decomposer[F, S] {
@@ -113,9 +110,7 @@ object Decomposer {
   }
 }
 
-trait FieldReader[F[_], S, T] extends Function1[FieldName, Kleisli[F, S, T]] {
-  def apply(fieldName: FieldName): Kleisli[F, S, T]
-}
+trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T])
 
 object FieldReader {
   type FieldName = String
