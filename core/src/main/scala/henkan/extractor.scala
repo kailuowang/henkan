@@ -3,7 +3,6 @@ package henkan
 import cats._
 import cats.data.Kleisli
 import cats.sequence._
-import henkan.FieldReader.FieldName
 import shapeless._
 import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
@@ -58,12 +57,12 @@ object Extractor {
       implicit
       ex: Extractor[F, S, T],
       un: Unapply.Aux1[FlatMap, F[S], F, S],
-      decomposer: Decomposer[F, S]
+      fieldReader: FieldReader[F, S, S]
     ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
 
       def apply(fieldName: FieldName): Kleisli[F, S, T] = Kleisli(
         s ⇒ {
-          val subcomp = decomposer(s, fieldName)
+          val subcomp = fieldReader(fieldName).run(s)
           un.TC.flatMap(subcomp)(ex.extract)
         }
       )
@@ -95,25 +94,16 @@ object Extractor {
       implicit val functor: Functor[F] = un.TC
       sequencer(mapper(fds())).map(gen.from)
     }
-
   }
 
   def apply[F[_], S, T](implicit ex: Extractor[F, S, T]): Extractor[F, S, T] = ex
 
 }
 
-trait Decomposer[F[_], S] extends ((S, FieldName) ⇒ F[S])
-
-object Decomposer {
-  def apply[F[_], S](f: (S, FieldName) ⇒ F[S]): Decomposer[F, S] = new Decomposer[F, S] {
-    def apply(s: S, fieldName: FieldName): F[S] = f(s, fieldName)
-  }
-}
-
 trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T])
 
 object FieldReader {
-  type FieldName = String
+
   def apply[F[_], S, T](f: (S, FieldName) ⇒ F[T]) = new FieldReader[F, S, T] {
     def apply(fieldName: FieldName): Kleisli[F, S, T] =
       Kleisli(s ⇒ f(s, fieldName))

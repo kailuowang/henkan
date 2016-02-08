@@ -1,5 +1,6 @@
 package henkan
 
+import algebra.{Semigroup, Monoid}
 import org.specs2.mutable.Specification
 
 import cats.implicits._
@@ -27,13 +28,12 @@ class ExtractorSpec extends Specification {
   "extract from hierarchical data" >> {
     def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
-    def myFieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
+    def fieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
       m.get(field).flatMap(safeCast[T])
     }
-    implicit val fint = myFieldReader[Int]
-    implicit val fString = myFieldReader[String]
-
-    implicit val decom = Decomposer((m: Map[String, Any], field: String) ⇒ m.get(field).flatMap(safeCast[Map[String, Any]]))
+    implicit val fint = fieldReader[Int]
+    implicit val fMap = fieldReader[Map[String, Any]]
+    implicit val fString = fieldReader[String]
 
     val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 
@@ -47,3 +47,28 @@ class ExtractorSpec extends Specification {
 
 }
 
+class ExporterSpec extends Specification {
+  import ExporterSyntax._
+  def fieldWriter[T] = FieldWriter { (fieldName: FieldName, v: T) ⇒
+    Map[String, Any](fieldName → v)
+  }
+
+  implicit val feInt = fieldWriter[Int]
+  implicit val feString = fieldWriter[String]
+  implicit val feRecursive = fieldWriter[Map[String, Any]]
+
+  implicit val m = new Semigroup[Map[String, Any]] {
+    def combine(x: Map[String, Any], y: Map[String, Any]): Map[String, Any] = x ++ y
+  }
+
+  "export single level class" >> {
+
+    val result = export[MyClass, Map[String, Any]](MyClass("foo1", 34))
+    result === Map[String, Any]("foo" → "foo1", "bar" → 34)
+  }
+
+  "export hiearchical data" >> {
+    val result = export[MyParent, Map[String, Any]](MyParent("parentFoo", MyClass("childFoo", 34)))
+    result === Map[String, Any]("foo1" → "parentFoo", "child" → Map[String, Any]("foo" → "childFoo", "bar" → 34))
+  }
+}

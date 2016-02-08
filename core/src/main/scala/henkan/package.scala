@@ -1,3 +1,4 @@
 package object henkan extends ExtractorSyntax {
-  object extractor extends ExtractorSyntax
+  type FieldName = String
+  object extractor extends ExtractorSyntax with ExporterSyntax
 }
