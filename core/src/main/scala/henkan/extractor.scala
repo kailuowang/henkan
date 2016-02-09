@@ -1,5 +1,6 @@
 package henkan
 
+import alleycats.{Pure, EmptyK}
 import cats._
 import cats.data.Kleisli
 import cats.sequence._
@@ -13,32 +14,6 @@ trait Extractor[F[_], S, T] {
 }
 
 object Extractor {
-
-  type FieldDef[K, +V] = K with ValueTag[K, V]
-  trait ValueTag[K, +V]
-
-  trait FieldDefs[L <: HList] extends DepFn0 with Serializable { type Out <: HList }
-
-  object FieldDefs {
-
-    def apply[L <: HList](implicit fds: FieldDefs[L]): Aux[L, fds.Out] = fds
-
-    type Aux[L <: HList, Out0 <: HList] = FieldDefs[L] { type Out = Out0 }
-
-    implicit def hnilFieldDefs[L <: HNil]: Aux[L, HNil] =
-      new FieldDefs[L] {
-        type Out = HNil
-        def apply(): Out = HNil
-      }
-
-    implicit def hlistFieldDefs[K, V, T <: HList](implicit
-      wk: Witness.Aux[K],
-      kt: FieldDefs[T]): Aux[FieldType[K, V] :: T, FieldDef[K, V] :: kt.Out] =
-      new FieldDefs[FieldType[K, V] :: T] {
-        type Out = FieldDef[K, V] :: kt.Out
-        def apply(): Out = wk.value.asInstanceOf[FieldDef[K, V]] :: kt()
-      }
-  }
 
   trait FieldExtractor[F[_], S, T] {
     def apply(fieldName: FieldName): Kleisli[F, S, T]
@@ -70,21 +45,38 @@ object Extractor {
   }
 
   object fieldExtractorMapper extends Poly1 {
+    import labelled.field
 
-    implicit def caseField[K <: Symbol, V, S, F[_]](
+    implicit def caseFieldWithoutDefault[K <: Symbol, V, S, F[_]](
       implicit
-      fr: FieldExtractor[F, S, V]
-    ) = at[FieldDef[K, V]] { f ⇒
-      import labelled.field
-      field[K](fr(f.name))
+      fr: FieldExtractor[F, S, V],
+      wk: Witness.Aux[K]
+    ) = at[FieldWithoutDefault[K, V]] { f ⇒
+      field[K](fr(wk.value.name))
+    }
+
+    implicit def caseFieldWithDefault[K <: Symbol, V, S, F[_]](
+      implicit
+      fr: FieldExtractor[F, S, V],
+      wk: Witness.Aux[K],
+      ue: Unapply.Aux1[EmptyK, F[V], F, V],
+      up: Unapply.Aux1[Pure, F[V], F, V]
+    ) = at[FieldWithDefault[K, V]] { f ⇒
+      val extracted = fr(wk.value.name)
+
+      field[K](extracted.mapF[F, V] { (fv: F[V]) ⇒
+        if (fv == ue.TC.empty[V])
+          up.TC.pure(f.defaultValue)
+        else
+          fv
+      })
     }
 
   }
 
   implicit def mkExtractor[F[_], S, T, Repr <: HList, FDs <: HList, ReprKleisli <: HList](
     implicit
-    gen: LabelledGeneric.Aux[T, Repr],
-    fds: FieldDefs.Aux[Repr, FDs],
+    ccd: CaseClassDefinition.Aux[T, Repr, FDs],
     mapper: Mapper.Aux[fieldExtractorMapper.type, FDs, ReprKleisli],
     sequencer: RecordSequencer.Aux[ReprKleisli, Kleisli[F, S, Repr]],
     un: Unapply.Aux1[Functor, F[Repr], F, Repr]
@@ -92,7 +84,7 @@ object Extractor {
 
     def apply(): Kleisli[F, S, T] = {
       implicit val functor: Functor[F] = un.TC
-      sequencer(mapper(fds())).map(gen.from)
+      sequencer(mapper(ccd.fields)).map(ccd.gen.from)
     }
   }
 

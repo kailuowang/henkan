@@ -1,15 +1,20 @@
 package henkan
 
 import algebra.{Semigroup, Monoid}
+import alleycats.{Pure, EmptyK}
 import org.specs2.mutable.Specification
 
 import cats.implicits._
 
+import alleycats.std.OptionInstances._
 import scala.util.Try
 
 case class MyClass(foo: String, bar: Int)
 
 case class MyParent(foo1: String, child: MyClass)
+
+case class CCWithDefault(foo: String = "a default value", bar2: Int)
+case class CCWithDefaultParent(child: CCWithDefault, bar: Int = 42)
 
 class ExtractorSpec extends Specification {
 
@@ -19,6 +24,8 @@ class ExtractorSpec extends Specification {
 
     implicit val frString = FieldReader((m: Map[String, String], field: String) ⇒ m.get(field))
 
+    implicitly[CaseClassDefinition[MyClass]]
+
     extract[Option, MyClass](Map("foo" → "a", "bar" → "2")) must beSome(MyClass("a", 2))
 
     extract[Option, MyClass](Map("foo" → "a")) must beNone
@@ -26,6 +33,7 @@ class ExtractorSpec extends Specification {
   }
 
   "extract from hierarchical data" >> {
+
     def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
     def fieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
@@ -35,14 +43,22 @@ class ExtractorSpec extends Specification {
     implicit val fMap = fieldReader[Map[String, Any]]
     implicit val fString = fieldReader[String]
 
-    val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
+    "without default value" >> {
 
-    extract[Option, MyParent](data) must beSome(MyParent("parent", MyClass("a", 2)))
+      val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 
-    val data2 = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a"))
+      extract[Option, MyParent](data) must beSome(MyParent("parent", MyClass("a", 2)))
 
-    extract[Option, MyParent](data2) must beNone
+      val data2 = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a"))
 
+      extract[Option, MyParent](data2) must beNone
+    }
+
+    "with default value" >> {
+      val data = Map[String, Any]("child" → Map[String, Any]("bar2" → 2))
+
+      extract[Option, CCWithDefaultParent](data) must beSome(CCWithDefaultParent(child = CCWithDefault(bar2 = 2)))
+    }
   }
 
 }
