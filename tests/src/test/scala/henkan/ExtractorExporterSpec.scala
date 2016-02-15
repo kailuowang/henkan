@@ -25,8 +25,6 @@ class ExtractorSpec extends Specification {
 
     implicit val frString = FieldReader((m: Map[String, String], field: String) ⇒ m.get(field))
 
-    implicitly[CaseClassDefinition[MyClass]]
-
     extract[Option, MyClass](Map("foo" → "a", "bar" → "2")) must beSome(MyClass("a", 2))
 
     extract[Option, MyClass](Map("foo" → "a")) must beNone

@@ -8,6 +8,7 @@ object Common {
     scalacOptions ++= Seq(
       "-deprecation",
       "-unchecked",
+//      "-Xlog-implicits",
       "-Xlint"
     )
   )

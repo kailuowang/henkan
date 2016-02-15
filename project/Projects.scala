@@ -31,8 +31,8 @@ object Projects extends Build {
     .aggregate(core)
     .settings(moduleName := "henkan-examples")
     .settings(Common.settings:_*)
+    .settings(Dependencies.settings:_*)
     .settings(Common.noPublishing: _*)
     .settings(Format.settings:_*)
-
 
 }
