@@ -8,6 +8,9 @@ import shapeless._
 import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
 
+import scala.annotation.implicitNotFound
+
+@implicitNotFound("For all fields in $T of type FT, there must be an implicit FieldReader[$F, $S, $T]")
 trait Extractor[F[_], S, T] {
   def apply(): Kleisli[F, S, T]
   def extract(s: S) = apply().run(s)

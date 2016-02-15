@@ -17,11 +17,11 @@ object FieldWriter {
   }
 }
 
+@implicitNotFound("For all fields in $T of type FT, there must be an implicit FieldWriter[FT, $S]")
 trait Exporter[T, S] extends (T ⇒ S)
 
 object Exporter {
 
-  @implicitNotFound("Cannot find field writer of type $T, to $S")
   trait FieldExporter[T, S] extends ((FieldName, T) ⇒ S)
 
   object FieldExporter {
