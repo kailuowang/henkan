@@ -10,10 +10,6 @@ trait FieldWithoutDefault[K, V] extends FieldDefinition[K, V]
 
 case class FieldWithDefault[K, V](defaultValue: V) extends FieldDefinition[K, V]
 
-object FieldDefinition {
-
-}
-
 trait CaseClassDefinition[T] {
   type Repr <: HList
 

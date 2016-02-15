@@ -1,4 +1,8 @@
-package object henkan extends ExtractorSyntax {
+package object henkan {
   type FieldName = String
-  object extractor extends ExtractorSyntax with ExporterSyntax
+  object all extends ExtractorSyntax with ExporterSyntax with ConverterSyntax
+  object extractor extends ExtractorSyntax
+  object exporter extends ExporterSyntax
+  object converter extends ConverterSyntax
+
 }

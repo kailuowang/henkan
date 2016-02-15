@@ -3,6 +3,7 @@ package henkan
 import algebra.{Semigroup, Monoid}
 import alleycats.{Pure, EmptyK}
 import org.specs2.mutable.Specification
+import henkan.all._
 
 import cats.implicits._
 
