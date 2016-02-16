@@ -4,5 +4,4 @@ package object henkan {
   object extractor extends ExtractorSyntax
   object exporter extends ExporterSyntax
   object converter extends ConverterSyntax
-
 }

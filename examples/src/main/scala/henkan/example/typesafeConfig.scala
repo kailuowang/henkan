@@ -58,7 +58,7 @@ object TypesafeConfig {
 
     val cfg = ConfigFactory.parseString(cfgString)
 
-    val result: Option[FarmSettings] = extract[Option, FarmSettings](cfg) //
+    val result: Option[FarmSettings] = extract[Option, FarmSettings](cfg)
 
     assert(result.contains(
       FarmSettings(

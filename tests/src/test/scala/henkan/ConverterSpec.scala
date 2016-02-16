@@ -21,7 +21,7 @@ class ConverterSpec extends Specification {
 
     val f = Foo("bR", 2)
 
-    convert(f).to[Foo2].having(bar2 = 3) === Foo2("bR", 3)
+    convert(f).to[Foo2].set(bar2 = 3) === Foo2("bR", 3)
   }
 
   "convert to class with more fields" >> {
@@ -30,7 +30,7 @@ class ConverterSpec extends Specification {
 
     val f = Foo("bR")
 
-    f.to[Foo2].having(bar2 = 3) === Foo2("bR", 3)
+    f.to[Foo2].set(bar2 = 3) === Foo2("bR", 3)
 
   }
 
@@ -40,7 +40,7 @@ class ConverterSpec extends Specification {
 
     val f = Foo("bR")
 
-    f.to[Foo2].having(bar2 = 3) === Foo2("bR", 3, false)
+    f.to[Foo2].set(bar2 = 3) === Foo2("bR", 3, false)
   }
 
   "convert to class with more fields and overriding default value" >> {
@@ -49,6 +49,6 @@ class ConverterSpec extends Specification {
 
     val f = Foo("bR")
 
-    f.to[Foo2].having(bar2 = 3) === Foo2("bR", 3)
+    f.to[Foo2].set(bar2 = 3) === Foo2("bR", 3)
   }
 }
