@@ -7,7 +7,6 @@ import henkan.all._
 
 import cats.implicits._
 
-import alleycats.std.OptionInstances._
 import scala.util.Try
 
 case class MyClass(foo: String, bar: Int)
@@ -54,36 +53,20 @@ class ExtractorSpec extends Specification {
     }
 
     "with default value" >> {
+      import alleycats.std.OptionInstances._
+
       val data = Map[String, Any]("child" → Map[String, Any]("bar2" → 2))
 
       extract[Option, CCWithDefaultParent](data) must beSome(CCWithDefaultParent(child = CCWithDefault(bar2 = 2)))
+    }
+
+    "with default value but no emptyK instance" >> {
+
+      val data = Map[String, Any]("bar" → 32, "child" → Map[String, Any]("foo" → "b", "bar2" → 2))
+
+      extract[Option, CCWithDefaultParent](data) must beSome(CCWithDefaultParent(bar = 32, child = CCWithDefault(foo = "b", bar2 = 2)))
     }
   }
 
 }
 
-class ExporterSpec extends Specification {
-  import ExporterSyntax._
-  def fieldWriter[T] = FieldWriter { (fieldName: FieldName, v: T) ⇒
-    Map[String, Any](fieldName → v)
-  }
-
-  implicit val feInt = fieldWriter[Int]
-  implicit val feString = fieldWriter[String]
-  implicit val feRecursive = fieldWriter[Map[String, Any]]
-
-  implicit val m = new Semigroup[Map[String, Any]] {
-    def combine(x: Map[String, Any], y: Map[String, Any]): Map[String, Any] = x ++ y
-  }
-
-  "export single level class" >> {
-
-    val result = export[MyClass, Map[String, Any]](MyClass("foo1", 34))
-    result === Map[String, Any]("foo" → "foo1", "bar" → 34)
-  }
-
-  "export hiearchical data" >> {
-    val result = export[MyParent, Map[String, Any]](MyParent("parentFoo", MyClass("childFoo", 34)))
-    result === Map[String, Any]("foo1" → "parentFoo", "child" → Map[String, Any]("foo" → "childFoo", "bar" → 34))
-  }
-}

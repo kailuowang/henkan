@@ -10,7 +10,13 @@ import shapeless.ops.hlist.Mapper
 
 import scala.annotation.implicitNotFound
 
-@implicitNotFound("For all fields in $T of type FT, there must be an implicit FieldReader[$F, $S, $T]")
+@implicitNotFound(
+  """
+    For all fields in $T of type FT, there must be an implicit FieldReader[$F, $S, $T].
+    $F needs to have instances of cats.FlatMap and cats.Functor.
+    If case class with default value is needed, $F needs to have instances of alleyCats.EmptyK and cats.Monad
+  """
+)
 trait Extractor[F[_], S, T] {
   def apply(): Kleisli[F, S, T]
   def extract(s: S) = apply().run(s)
@@ -47,7 +53,19 @@ object Extractor {
     }
   }
 
-  object fieldExtractorMapper extends Poly1 {
+  trait lowPriorityMapper extends Poly1 {
+    import labelled.field
+
+    implicit def lpCaseFieldWithDefault[K <: Symbol, V, S, F[_]](
+      implicit
+      fr: FieldExtractor[F, S, V],
+      wk: Witness.Aux[K]
+    ) = at[FieldWithDefault[K, V]] { f ⇒
+      field[K](fr(wk.value.name))
+    }
+  }
+
+  object fieldExtractorMapper extends lowPriorityMapper {
     import labelled.field
 
     implicit def caseFieldWithoutDefault[K <: Symbol, V, S, F[_]](
