@@ -1,10 +1,12 @@
-package henkan
+package henkan.exporter
 
 import algebra.Semigroup
+import henkan.FieldName
+import henkan.extractor.{MyParent, MyClass}
 import org.specs2.mutable.Specification
 
 class ExporterSpec extends Specification {
-  import ExporterSyntax._
+
   def fieldWriter[T] = FieldWriter { (fieldName: FieldName, v: T) ⇒
     Map[String, Any](fieldName → v)
   }

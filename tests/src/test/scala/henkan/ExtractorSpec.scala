@@ -1,4 +1,4 @@
-package henkan
+package henkan.extractor
 
 import algebra.{Semigroup, Monoid}
 import alleycats.{Pure, EmptyK}

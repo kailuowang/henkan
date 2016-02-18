@@ -1,9 +1,10 @@
-package henkan
+package henkan.extractor
 
 import alleycats.{Pure, EmptyK}
 import cats._
 import cats.data.Kleisli
 import cats.sequence._
+import henkan.{CaseClassDefinition, FieldWithoutDefault, FieldWithDefault, FieldName}
 import shapeless._
 import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
