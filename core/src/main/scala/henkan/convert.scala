@@ -36,7 +36,11 @@ trait ConverterSyntax {
   implicit class convert[InT <: Product](in: InT) {
     class ConvertTo[OutT] {
       object set extends RecordArgs {
-        def applyRecord[R <: HList](rec: R)(implicit c: Converter[R, InT, OutT]): OutT = c(rec, in)
+        def applyRecord[R <: HList](rec: R)(
+          implicit
+          c: Converter[R, InT, OutT],
+          checkFields: CheckFields[R, OutT]
+        ): OutT = c(rec, in)
       }
       def apply()(implicit c: Converter[HNil, InT, OutT]): OutT = c(HNil, in)
     }

@@ -2,6 +2,7 @@ package henkan
 
 import henkan.converter._
 import org.specs2.mutable.Specification
+import shapeless.ops.record.{RemoveAll, Keys, SelectAll}
 
 class ConverterSpec extends Specification {
   "convert to class with less fields" >> {
