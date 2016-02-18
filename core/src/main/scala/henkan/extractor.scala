@@ -12,9 +12,11 @@ import scala.annotation.implicitNotFound
 
 @implicitNotFound(
   """
-    For all fields in $T of type FT, there must be an implicit FieldReader[$F, $S, $T].
-    $F needs to have instances of cats.FlatMap and cats.Functor.
-    If case class with default value is needed, $F needs to have instances of alleyCats.EmptyK and cats.Monad
+    For all fields in ${T} of type FT, there must be an implicit FieldReader[${F}, ${S}, FT].
+    ${F} needs to have instances of cats.FlatMap and cats.Functor.
+    If case class with default value is needed, ${F} needs to have instances of alleyCats.EmptyK and cats.Monad
+    To extract hierarchical case classes, you need to have an implicit FieldReader[${F}, ${S}, ${S}], that is,
+    extract a sub ${S} out of a field of ${S}.
   """
 )
 trait Extractor[F[_], S, T] {

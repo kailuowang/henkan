@@ -8,7 +8,7 @@ import shapeless.ops.hlist.{LeftReducer, LeftFolder}
 
 import scala.annotation.implicitNotFound
 
-@implicitNotFound("Cannot find field writer of type $T, to $S")
+@implicitNotFound("Cannot find field writer of type ${T}, to ${S}")
 trait FieldWriter[T, S] extends ((FieldName, T) ⇒ S)
 
 object FieldWriter {
@@ -17,7 +17,7 @@ object FieldWriter {
   }
 }
 
-@implicitNotFound("For all fields in $T of type FT, there must be an implicit FieldWriter[FT, $S]")
+@implicitNotFound("For all fields in ${T} of type FT, there must be an implicit FieldWriter[FT, ${S}]")
 trait Exporter[T, S] extends (T ⇒ S)
 
 object Exporter {

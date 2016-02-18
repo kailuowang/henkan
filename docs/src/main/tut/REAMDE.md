@@ -14,23 +14,23 @@ Pre-alpha phase.
 ### First working example, transform between Map and case class
 
 Suppose you have some case classes
-```scala
+```tut:silent
 case class MyClass(foo: String, bar: Int)
 
 case class MyParent(foo1: String, child: MyClass)
 ```
 And you want to read them out of Maps
-```scala
+```tut:silent
 val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 ```
 
-Then first lets write some primitive readers. Note that it 's you that dictate the source type `Map[String, Any]` and High kinded  container type `Option`
-```scala
+Then first lets write some primitive readers. Note that it 's you that dictate the source type `Map[String, Any]` and High kinded container type `Option`
+
+```tut:silent
 import cats.implicits._
 import scala.util.Try
-import henkan._
-
-type `Option`, Henkan takes types that you can provide `FieldReader` with
+import henkan.extractor._
+import henkan.FieldReader
 
 def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
@@ -39,10 +39,12 @@ def myFieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
 }
 implicit val fint = myFieldReader[Int]
 implicit val fString = myFieldReader[String]
+implicit val fMap = myFieldReader[Map[String, Any]] // need this to recursively extract case classes
 ```
 
 Now you can extract any case classes with String or Int fields from the Map[String, Any] data
-```scala
-extract[Option, MyParent](data) // returns Some(MyParent("parent", MyClass("a", 2)))
+
+```tut
+extract[Option, MyParent](data)
 ```
 

@@ -23,7 +23,7 @@ class ExporterSpec extends Specification {
     result === Map[String, Any]("foo" → "foo1", "bar" → 34)
   }
 
-  "export hiearchical data" >> {
+  "export hierarchical data" >> {
     val result = export[MyParent, Map[String, Any]](MyParent("parentFoo", MyClass("childFoo", 34)))
     result === Map[String, Any]("foo1" → "parentFoo", "child" → Map[String, Any]("foo" → "childFoo", "bar" → 34))
   }
