@@ -6,10 +6,11 @@
 
 # Henkan [変換]
 
-A tiny library that provides generic and yet typesafe transformation between runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) and case classes.
+A tiny library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
 
+Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
-Pre-alpha phase.
+## Examples
 
 ### Transform between case classes
 
