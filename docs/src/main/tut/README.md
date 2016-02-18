@@ -11,22 +11,66 @@ A tiny library that provides generic and yet typesafe transformation between run
 
 Pre-alpha phase.
 
-### First working example, transform between Map and case class
+### Transform between case classes
+
+
+```tut:silent
+import cats.implicits._
+import scala.util.Try
+import henkan.converter._
+import java.time.LocalDate
+case class Employee(name: String, address: String, dateOfBirth: LocalDate, salary: Double = 50000d)
+
+case class UnionMember(name: String, address: String, dateOfBirth: LocalDate)
+
+val employee = Employee("George", "123 E 86 St", LocalDate.of(1963, 3, 12), 54000)
+
+val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7, 29))
+```
+
+Now use the henkan magic to transform between `UnionMember` and `Employee`
+```tut
+
+employee.to[UnionMember]()
+
+unionMember.to[Employee]()
+
+unionMember.to[Employee].set(salary = 60000.0)
+
+```
+Missing fields will fail the compilation
+```tut
+case class People(name: String, address: String)
+
+val people = People("John", "49 Wall St.")
+```
+```tut:fail
+people.to[Employee]() //missing DoB
+
+```
+Wrong argument types will fail the compilation
+```tut:fail
+unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
+
+```
+
+
+### Transform between Map and case class
 
 Suppose you have some case classes
-```scala
+```tut:silent:reset
 case class MyClass(foo: String, bar: Int)
 
 case class MyParent(foo1: String, child: MyClass)
 ```
 And you want to read them out of Maps
-```scala
+```tut:silent
 val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 ```
 
 Then first lets write some primitive readers. Note that it 's you that dictate the source type `Map[String, Any]` and High kinded container type `Option`
 
-```scala
+```tut:silent
 import cats.implicits._
 import scala.util.Try
 import henkan.extractor._
@@ -44,8 +88,7 @@ implicit val fMap = myFieldReader[Map[String, Any]] // need this to recursively 
 
 Now you can extract any case classes with String or Int fields from the Map[String, Any] data
 
-```scala
-scala> extract[Option, MyParent](data)
-res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
+```tut
+extract[Option, MyParent](data)
 ```
 
