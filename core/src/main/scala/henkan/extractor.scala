@@ -30,15 +30,7 @@ object Extractor {
     def apply(fieldName: FieldName): Kleisli[F, S, T]
   }
 
-  object FieldExtractor {
-
-    implicit def mkFieldExtractor[F[_], S, T](
-      implicit
-      fr: FieldReader[F, S, T]
-    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
-      def apply(fieldName: FieldName) = fr.apply(fieldName)
-    }
-
+  trait lowPriorityFieldExtractor {
     implicit def recursiveFieldExtractor[F[_], S, T](
       implicit
       ex: Extractor[F, S, T],
@@ -55,9 +47,24 @@ object Extractor {
     }
   }
 
+  object FieldExtractor extends lowPriorityFieldExtractor {
+
+    implicit def mkFieldExtractor[F[_], S, T](
+      implicit
+      fr: FieldReader[F, S, T]
+    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
+      def apply(fieldName: FieldName) = fr.apply(fieldName)
+    }
+
+  }
+
   trait lowPriorityMapper extends Poly1 {
     import labelled.field
 
+    /**
+     * Used when EmptyK and Pure instances are not available for F
+     * , in which case, default value will be ignored
+     */
     implicit def lpCaseFieldWithDefault[K <: Symbol, V, S, F[_]](
       implicit
       fr: FieldExtractor[F, S, V],
