@@ -1,7 +1,7 @@
 
 lazy val henkan = project.in(file("."))
   .settings(moduleName := "root")
-  .aggregate(core, tests)
+  .aggregate(core, tests, examples, docs)
   .settings(Common.settings:_*)
   .settings(Common.noPublishing: _*)
 

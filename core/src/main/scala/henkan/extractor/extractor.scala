@@ -10,6 +10,9 @@ import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
 
 import scala.annotation.implicitNotFound
+import scala.annotation.unchecked.{uncheckedVariance ⇒ uV}
+import scala.collection.GenTraversableOnce
+import scala.collection.generic.CanBuildFrom
 
 @implicitNotFound(
   """
@@ -36,21 +39,25 @@ object Extractor {
       implicit
       ex: Extractor[F, S, T],
       un: Unapply.Aux1[FlatMap, F[S], F, S],
-      fieldReader: FieldReader[F, S, S]
-    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
+      fr: FieldReader[F, S, S]
+    ): FieldExtractor[F, S, T] = FieldExtractor(fr.flatMap(ex.extract))
 
-      def apply(fieldName: FieldName): Kleisli[F, S, T] = Kleisli(
-        s ⇒ {
-          val subcomp = fieldReader(fieldName).run(s)
-          un.TC.flatMap(subcomp)(ex.extract)
-        }
-      )
-    }
+    implicit def highKindedRecursiveFieldExtractorWithMapK[F[_], S, RG[_], G[_], T](
+      implicit
+      ex: Extractor[F, S, T],
+      fr: FieldReader[F, S, RG[S]],
+      unF: Unapply.Aux1[Traverse, G[F[T]], G, F[T]],
+      evi: RG[S] <:< GenTraversableOnce[S],
+      ff: cats.Unapply.Aux1[Functor, G[S], G, S],
+      ua: Unapply.Aux1[Applicative, F[RG[S]], F, RG[S]],
+      ffm: Unapply.Aux1[FlatMap, F[RG[S]], F, RG[S]],
+      cb: CanBuildFrom[Nothing, S, G[S @uV]]
+    ): FieldExtractor[F, S, G[T]] = FieldExtractor(fr.flatMapK[G, RG, S, T](ex.extract))
   }
 
   object FieldExtractor extends lowPriorityFieldExtractor {
 
-    implicit def mkFieldExtractor[F[_], S, T](
+    implicit def apply[F[_], S, T](
       implicit
       fr: FieldReader[F, S, T]
     ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
@@ -123,7 +130,50 @@ object Extractor {
 
 }
 
-trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T])
+trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T]) {
+  def map[U](f: T ⇒ U)(implicit unapply: Unapply.Aux1[Functor, F[T], F, T]): FieldReader[F, S, U] = {
+    implicit val functor: Functor[F] = unapply.TC
+    FieldReader(andThen(_.map(f)))
+  }
+
+  def flatMap[U](f: T ⇒ F[U])(implicit unapply: Unapply.Aux1[FlatMap, F[T], F, T]): FieldReader[F, S, U] = {
+    implicit val fm: FlatMap[F] = unapply.TC
+    FieldReader(andThen(_.flatMapF(f)))
+  }
+
+  /**
+   * When T is a high kinded type RG[RT], this allows to map that G[U]
+   */
+  def mapK[G[_], RG[_], RT, U](c: RT ⇒ U)(
+    implicit
+    fg: Unapply.Aux1[Functor, T, RG, RT],
+    evi: RG[U] <:< GenTraversableOnce[U],
+    ff: Unapply.Aux1[Functor, F[T], F, T],
+    cb: CanBuildFrom[Nothing, U, G[U @uV]]
+  ): FieldReader[F, S, G[U]] = {
+    map(g ⇒ evi(fg.TC.map(fg.subst(g))(c)).to[G])
+  }
+  /**
+   * When T is a high kinded type RG[RT], this allows to map that G[U]
+   */
+  def flatMapK[G[_], RG[_], RT, U](c: RT ⇒ F[U])(
+    implicit
+    fg: Unapply.Aux1[Traverse, G[F[U]], G, F[U]],
+    evi: T <:< GenTraversableOnce[RT],
+    ff: Unapply.Aux1[Functor, G[RT], G, RT],
+    ffm: Unapply.Aux1[FlatMap, F[T], F, T],
+    ua: Unapply.Aux1[Applicative, F[T], F, T],
+    cb: CanBuildFrom[Nothing, RT, G[RT]]
+  ): FieldReader[F, S, G[U]] = {
+    implicit val ap: Applicative[F] = ua.TC
+
+    flatMap { t ⇒
+      val gfu: G[F[U]] = ff.TC.map(evi(t).to[G])(c)
+      fg.TC.sequence(gfu)
+    }
+  }
+
+}
 
 object FieldReader {
 
@@ -131,6 +181,25 @@ object FieldReader {
     def apply(fieldName: FieldName): Kleisli[F, S, T] =
       Kleisli(s ⇒ f(s, fieldName))
   }
+
+  implicit def apply[F[_], S, T](f: FieldName ⇒ Kleisli[F, S, T]) = new FieldReader[F, S, T] {
+    def apply(fieldName: FieldName): Kleisli[F, S, T] = f(fieldName)
+
+  }
+
+  /**
+   *  FieldReader.mapK has a better API
+   *
+   */
+  def highKindedReader[RG[_], G[_], RT, T, F[_], S](c: RT ⇒ T)(
+    implicit
+    evi: RG[T] <:< GenTraversableOnce[T],
+    fr: FieldReader[F, S, RG[RT]],
+    fg: Unapply.Aux1[Functor, RG[RT], RG, RT],
+    ff: Unapply.Aux1[Functor, F[RG[RT]], F, RG[RT]],
+    cb: CanBuildFrom[Nothing, T, G[T]]
+  ): FieldReader[F, S, G[T]] = fr.mapK(c)
+
 }
 
 trait ExtractorSyntax {
