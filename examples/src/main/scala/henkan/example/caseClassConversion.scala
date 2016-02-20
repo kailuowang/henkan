@@ -1,7 +1,7 @@
 package henkan.example
 
 import java.time.LocalDate
-import henkan.converter._
+import henkan.syntax.convert._
 
 object caseClassConversion {
 

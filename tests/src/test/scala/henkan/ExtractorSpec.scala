@@ -4,7 +4,7 @@ import algebra.{Semigroup, Monoid}
 import alleycats.{Pure, EmptyK}
 import cats.{Functor, Unapply}
 import org.specs2.mutable.Specification
-import henkan.all._
+import henkan.syntax.all._
 
 import cats.implicits._
 

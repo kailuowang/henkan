@@ -2,7 +2,6 @@ package henkan.example
 
 import java.time.Duration
 
-import henkan.{Extractor, FieldReader}
 import henkan.extractor._
 import com.typesafe.config._
 import cats.implicits._

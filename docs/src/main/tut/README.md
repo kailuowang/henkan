@@ -29,7 +29,7 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
 ```tut
-import henkan.converter._
+import henkan.syntax.convert._
 
 employee.to[UnionMember]()
 
