@@ -26,7 +26,7 @@ class ExtractorSpec extends Specification {
 
     implicit val frString = FieldReader((m: Map[String, String], field: String) ⇒ m.get(field))
 
-    implicit val frInt = frString.map(_.toInt)
+    implicit val frInt = FieldReaderMapper((_: String).toInt)
 
     extract[Option, MyClass](Map("foo" → "a", "bar" → "2")) must beSome(MyClass("a", 2))
 
@@ -38,12 +38,12 @@ class ExtractorSpec extends Specification {
 
     def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
-    def fieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
-      m.get(field).flatMap(safeCast[T])
-    }
-    implicit val fint = fieldReader[Int]
-    implicit val fMap = fieldReader[Map[String, Any]]
-    implicit val fString = fieldReader[String]
+    implicit val frAny = FieldReader { (_: Map[String, Any]).get(_: String) }
+    def fieldMap[T] = FieldReaderMapper { safeCast[T](_: Any) }
+
+    implicit val fint = fieldMap[Int]
+    implicit val fMap = fieldMap[Map[String, Any]]
+    implicit val fString = fieldMap[String]
 
     "without default value" >> {
 
@@ -77,17 +77,6 @@ class ExtractorSpec extends Specification {
       implicit val frStringL = frString.map(_.split(",").toList)
 
       implicit val frIntL: FieldReader[Option, Map[String, String], Vector[Int]] = frStringL.mapK((_: String).toInt)
-
-      val data = Map[String, String]("foo" → "1,2")
-      extract[Option, CCWithHighKindedType](data) must beSome(CCWithHighKindedType(Vector(1, 2)))
-    }
-
-    "extract high kinded type using FieldReader.highkinded" >> {
-
-      implicit val frStringL = FieldReader((m: Map[String, String], field: String) ⇒
-        m.get(field).map((s: String) ⇒ s.split(",").toList))
-
-      implicit val frIntL = FieldReader.highKindedReader[List, Vector, String, Int, Option, Map[String, String]]((_: String).toInt)
 
       val data = Map[String, String]("foo" → "1,2")
       extract[Option, CCWithHighKindedType](data) must beSome(CCWithHighKindedType(Vector(1, 2)))
