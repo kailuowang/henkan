@@ -5,7 +5,6 @@ import cats.data.Kleisli
 import henkan._
 import scala.annotation.unchecked.{uncheckedVariance ⇒ uV}
 
-import scala.annotation.unchecked.uncheckedVariance
 import scala.collection.GenTraversableOnce
 import scala.collection.generic.CanBuildFrom
 
@@ -61,6 +60,14 @@ trait lowPriorityMk {
     frm: FieldReaderMapper[RT, T],
     un: Unapply.Aux1[Functor, F[RT], F, RT]
   ): FieldReader[F, S, T] = fr.map(frm.apply)
+
+  implicit def mkFromFlatMap[F[_], S, RT, T](
+    implicit
+    fr: FieldReader[F, S, RT],
+    frm: FieldReaderMapper[RT, F[T]],
+    un: Unapply.Aux1[FlatMap, F[RT], F, RT]
+  ): FieldReader[F, S, T] = fr.flatMap(frm.apply)
+
 }
 
 object FieldReader extends lowPriorityMk {
@@ -74,13 +81,6 @@ object FieldReader extends lowPriorityMk {
     def apply(fieldName: FieldName): Kleisli[F, S, T] = f(fieldName)
   }
 
-  implicit def mkFromFlatMap[F[_], S, RT, T](
-    implicit
-    fr: FieldReader[F, S, RT],
-    frm: FieldReaderMapper[RT, F[T]],
-    un: Unapply.Aux1[FlatMap, F[RT], F, RT]
-  ): FieldReader[F, S, T] = fr.flatMap(frm.apply)
-
 }
 
 trait FieldReaderMapper[T, U] {
@@ -91,4 +91,9 @@ object FieldReaderMapper {
   implicit def apply[T, U](f: T ⇒ U) = new FieldReaderMapper[T, U] {
     def apply(t: T): U = f(t)
   }
+
+  implicit def mkFromExtractor[F[_], S, U](
+    implicit
+    extractor: Extractor[F, S, U]
+  ): FieldReaderMapper[S, F[U]] = extractor.extract _
 }

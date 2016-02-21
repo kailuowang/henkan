@@ -62,7 +62,7 @@ Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
 <console>:21: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
-error after rewriting to henkan.`package`.converter.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
+error after rewriting to henkan.`package`.syntax.convert.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
                                    ^

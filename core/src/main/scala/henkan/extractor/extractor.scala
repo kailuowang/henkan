@@ -35,14 +35,13 @@ object Extractor {
   }
 
   trait lowPriorityFieldExtractor {
-    implicit def recursiveFieldExtractor[F[_], S, T](
-      implicit
-      ex: Extractor[F, S, T],
-      un: Unapply.Aux1[FlatMap, F[S], F, S],
-      fr: FieldReader[F, S, S]
-    ): FieldExtractor[F, S, T] = FieldExtractor(fr.flatMap(ex.extract))
 
-    implicit def highKindedRecursiveFieldExtractorWithMapK[F[_], S, RG[_], G[_], T](
+    /**
+     * Intended to provide support for recursively extract high kinded type containing case classes
+     *  This hacky implementation is rather weak and narrow. I can't find a generic solution mostly
+     *  due to the difficulty working with scala unifying types of different kinds. (SI-2712?)
+     */
+    implicit def mkRecursiveExtractorForTraversible[F[_], S, RG[_], G[_], T](
       implicit
       ex: Extractor[F, S, T],
       fr: FieldReader[F, S, RG[S]],
@@ -56,13 +55,28 @@ object Extractor {
   }
 
   object FieldExtractor extends lowPriorityFieldExtractor {
+    implicit def mk[F[_], S, T](
+      implicit
+      fr: FieldReader[F, S, T]
+    ): FieldExtractor[F, S, T] = apply(fr)
 
     implicit def apply[F[_], S, T](
-      implicit
       fr: FieldReader[F, S, T]
     ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
       def apply(fieldName: FieldName) = fr.apply(fieldName)
     }
+
+    /**
+     * Recursively extract sub case class fields
+     * this intermediate is needed so that compiler can
+     * set the resolving sequence right
+     */
+    implicit def recursiveFieldExtractor[F[_], S, T](
+      implicit
+      ex: Extractor[F, S, T],
+      un: Unapply.Aux1[FlatMap, F[S], F, S],
+      fr: FieldReader[F, S, S]
+    ): FieldExtractor[F, S, T] = mk
 
   }
 
