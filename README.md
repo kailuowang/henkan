@@ -10,6 +10,29 @@ A tiny library that provides generic and yet typesafe transformation between cas
 
 Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
+Henkan can
+
+1. transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
+
+  Features:
+
+  a. quick transformation when the source case class has all the fields the target case class has: e.g. `a.to[B]()`
+
+  b. supplement (if source case class doesn't have a field) or override field values. e.g. `a.to[B].set(foo = "bar")`
+
+  c. use the default values of the target case classes if needed
+
+2. transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
+
+  Features:
+
+  a. transform any runtime data type to an arbitrary Monad of taget case class - you just need to provide some `FieldReader`s that can read primitive values out of the runtime data type given a field name.
+
+  b. supports default value.
+
+  c. support recursive case classes, i.e. case class that has case class fields.
+
+
 ## Examples
 
 ### Transform between case classes
@@ -69,7 +92,7 @@ possible cause: maybe a wrong Dynamic method signature?
 ```
 
 
-### Transform between Map and case class
+### Transform between runtime data types and case class
 
 Suppose you have some case classes
 ```scala
@@ -77,7 +100,7 @@ case class MyClass(foo: String, bar: Int)
 
 case class MyParent(foo1: String, child: MyClass)
 ```
-And you want to read them out of Maps
+And you want to transform them from a Map[String, Any]
 ```scala
 val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
 ```
@@ -105,4 +128,6 @@ Now you can extract any case classes with String or Int fields from the Map[Stri
 scala> extract[Option, MyParent](data)
 res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
 ```
+
+### Other examples can be found in [examples](examples/src/main/scala/henkan/example) including a typesafe config transformer
 

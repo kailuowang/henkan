@@ -41,7 +41,7 @@ object Extractor {
      *  This hacky implementation is rather weak and narrow. I can't find a generic solution mostly
      *  due to the difficulty working with scala unifying types of different kinds. (SI-2712?)
      */
-    implicit def mkRecursiveExtractorForTraversible[F[_], S, RG[_], G[_], T](
+    implicit def mkRecursiveExtractorForTraversable[F[_], S, RG[_], G[_], T](
       implicit
       ex: Extractor[F, S, T],
       fr: FieldReader[F, S, RG[S]],
