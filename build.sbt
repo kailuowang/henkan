@@ -1,7 +1,7 @@
 
 lazy val henkan = project.in(file("."))
   .settings(moduleName := "root")
-  .aggregate(core, tests)
+  .aggregate(core, tests, examples, docs)
   .settings(Common.settings:_*)
   .settings(Common.noPublishing: _*)
 
@@ -14,7 +14,7 @@ lazy val core = project.in(file("core"))
 
 lazy val tests = project.in(file("tests"))
   .dependsOn(core)
-  .aggregate(core)
+  .aggregate(core, docs)
   .settings(moduleName := "henkan-tests")
   .settings(Common.settings:_*)
   .settings(Common.noPublishing: _*)
@@ -33,6 +33,8 @@ lazy val examples = project.in(file("examples"))
 
 lazy val docs = project.in(file("docs"))
   .dependsOn(core)
+  .settings(compile <<= (compile in Compile).dependsOn(tut))
+  .settings(test <<= (test in Test).dependsOn(tut))
   .settings(moduleName := "henkan-docs")
   .settings(Dependencies.settings:_*)
   .settings(tutSettings)

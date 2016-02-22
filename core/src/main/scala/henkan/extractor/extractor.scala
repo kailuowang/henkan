@@ -1,14 +1,18 @@
-package henkan
+package henkan.extractor
 
 import alleycats.{Pure, EmptyK}
 import cats._
 import cats.data.Kleisli
 import cats.sequence._
+import henkan.{CaseClassDefinition, FieldWithoutDefault, FieldWithDefault, FieldName}
 import shapeless._
 import shapeless.labelled._
 import shapeless.ops.hlist.Mapper
 
 import scala.annotation.implicitNotFound
+import scala.annotation.unchecked.{uncheckedVariance ⇒ uV}
+import scala.collection.GenTraversableOnce
+import scala.collection.generic.CanBuildFrom
 
 @implicitNotFound(
   """
@@ -31,30 +35,48 @@ object Extractor {
   }
 
   trait lowPriorityFieldExtractor {
-    implicit def recursiveFieldExtractor[F[_], S, T](
+
+    /**
+     * Intended to provide support for recursively extract high kinded type containing case classes
+     *  This hacky implementation is rather weak and narrow. I can't find a generic solution mostly
+     *  due to the difficulty working with scala unifying types of different kinds. (SI-2712?)
+     */
+    implicit def mkRecursiveExtractorForTraversible[F[_], S, RG[_], G[_], T](
       implicit
       ex: Extractor[F, S, T],
-      un: Unapply.Aux1[FlatMap, F[S], F, S],
-      fieldReader: FieldReader[F, S, S]
-    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
-
-      def apply(fieldName: FieldName): Kleisli[F, S, T] = Kleisli(
-        s ⇒ {
-          val subcomp = fieldReader(fieldName).run(s)
-          un.TC.flatMap(subcomp)(ex.extract)
-        }
-      )
-    }
+      fr: FieldReader[F, S, RG[S]],
+      unF: Unapply.Aux1[Traverse, G[F[T]], G, F[T]],
+      evi: RG[S] <:< GenTraversableOnce[S],
+      ff: cats.Unapply.Aux1[Functor, G[S], G, S],
+      ua: Unapply.Aux1[Applicative, F[RG[S]], F, RG[S]],
+      ffm: Unapply.Aux1[FlatMap, F[RG[S]], F, RG[S]],
+      cb: CanBuildFrom[Nothing, S, G[S @uV]]
+    ): FieldExtractor[F, S, G[T]] = FieldExtractor(fr.flatMapK[G, RG, S, T](ex.extract))
   }
 
   object FieldExtractor extends lowPriorityFieldExtractor {
-
-    implicit def mkFieldExtractor[F[_], S, T](
+    implicit def mk[F[_], S, T](
       implicit
+      fr: FieldReader[F, S, T]
+    ): FieldExtractor[F, S, T] = apply(fr)
+
+    implicit def apply[F[_], S, T](
       fr: FieldReader[F, S, T]
     ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
       def apply(fieldName: FieldName) = fr.apply(fieldName)
     }
+
+    /**
+     * Recursively extract sub case class fields
+     * this intermediate is needed so that compiler can
+     * set the resolving sequence right
+     */
+    implicit def recursiveFieldExtractor[F[_], S, T](
+      implicit
+      ex: Extractor[F, S, T],
+      un: Unapply.Aux1[FlatMap, F[S], F, S],
+      fr: FieldReader[F, S, S]
+    ): FieldExtractor[F, S, T] = mk
 
   }
 
@@ -120,16 +142,6 @@ object Extractor {
 
   def apply[F[_], S, T](implicit ex: Extractor[F, S, T]): Extractor[F, S, T] = ex
 
-}
-
-trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T])
-
-object FieldReader {
-
-  def apply[F[_], S, T](f: (S, FieldName) ⇒ F[T]) = new FieldReader[F, S, T] {
-    def apply(fieldName: FieldName): Kleisli[F, S, T] =
-      Kleisli(s ⇒ f(s, fieldName))
-  }
 }
 
 trait ExtractorSyntax {

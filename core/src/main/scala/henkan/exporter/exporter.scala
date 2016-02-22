@@ -1,6 +1,7 @@
-package henkan
+package henkan.exporter
 
 import algebra.{Semigroup, Monoid}
+import henkan.FieldName
 import shapeless.labelled.FieldType
 import shapeless._, HList._
 import cats.implicits._

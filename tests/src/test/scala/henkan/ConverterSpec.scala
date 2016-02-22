@@ -1,6 +1,6 @@
 package henkan
 
-import henkan.converter._
+import henkan.syntax.convert._
 import org.specs2.mutable.Specification
 import shapeless.ops.record.{RemoveAll, Keys, SelectAll}
 

@@ -16,10 +16,8 @@ Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeles
 
 
 ```scala
-import cats.implicits._
-import scala.util.Try
-import henkan.converter._
 import java.time.LocalDate
+
 case class Employee(name: String, address: String, dateOfBirth: LocalDate, salary: Double = 50000d)
 
 case class UnionMember(name: String, address: String, dateOfBirth: LocalDate)
@@ -31,14 +29,17 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
 ```scala
+scala> import henkan.syntax.convert._
+import henkan.syntax.convert._
+
 scala> employee.to[UnionMember]()
-res3: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
+res4: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
 
 scala> unionMember.to[Employee]()
-res4: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,50000.0)
+res5: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,50000.0)
 
 scala> unionMember.to[Employee].set(salary = 60000.0)
-res5: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,60000.0)
+res6: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,60000.0)
 ```
 Missing fields will fail the compilation
 ```scala
@@ -50,7 +51,7 @@ people: People = People(John,49 Wall St.)
 ```
 ```scala
 scala> people.to[Employee]() //missing DoB
-<console>:25: error:
+<console>:21: error:
     You have not provided enough arguments to convert from People to Employee.
     shapeless.HNil
 
@@ -60,8 +61,8 @@ scala> people.to[Employee]() //missing DoB
 Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:25: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
-error after rewriting to henkan.`package`.converter.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
+<console>:21: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
+error after rewriting to henkan.`package`.syntax.convert.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
                                    ^
@@ -87,7 +88,6 @@ Then first lets write some primitive readers. Note that it 's you that dictate t
 import cats.implicits._
 import scala.util.Try
 import henkan.extractor._
-import henkan.FieldReader
 
 def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 

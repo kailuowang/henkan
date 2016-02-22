@@ -16,10 +16,8 @@ Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeles
 
 
 ```tut:silent
-import cats.implicits._
-import scala.util.Try
-import henkan.converter._
 import java.time.LocalDate
+
 case class Employee(name: String, address: String, dateOfBirth: LocalDate, salary: Double = 50000d)
 
 case class UnionMember(name: String, address: String, dateOfBirth: LocalDate)
@@ -31,6 +29,7 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
 ```tut
+import henkan.syntax.convert._
 
 employee.to[UnionMember]()
 
@@ -75,7 +74,6 @@ Then first lets write some primitive readers. Note that it 's you that dictate t
 import cats.implicits._
 import scala.util.Try
 import henkan.extractor._
-import henkan.FieldReader
 
 def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
 
