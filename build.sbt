@@ -1,12 +1,12 @@
 
 lazy val henkan = project.in(file("."))
-  .settings(moduleName := "root")
+  .settings(moduleName := "henkan-all")
   .aggregate(core, tests, examples, docs)
   .settings(Common.settings:_*)
   .settings(Common.noPublishing: _*)
 
 lazy val core = project.in(file("core"))
-  .settings(moduleName := "henkan-core")
+  .settings(moduleName := "henkan")
   .settings(Common.settings:_*)
   .settings(Dependencies.settings:_*)
   .settings(Publish.settings:_*)

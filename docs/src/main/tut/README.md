@@ -2,7 +2,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/coverage/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [![Stories in Ready](https://badge.waffle.io/kailuowang/henkan.svg?label=ready&title=Ready)](http://waffle.io/kailuowang/henkan)
-
+[ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan-core/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan-core/_latestVersion)
 
 # Henkan [変換]
 
@@ -32,6 +32,11 @@ Henkan can
 
   c. support recursive case classes, i.e. case class that has case class fields.
 
+## Get started 
+
+```scala
+ libraryDependencies += "com.kailuowang" %% "henkan" % "0.0.2"
+```
 
 ## Examples
 
