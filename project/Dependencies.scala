@@ -6,11 +6,11 @@ object Dependencies {
     val specs2 = "3.6.6"
   }
 
-  val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.0-SNAPSHOT")
+  val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.0")
 
-  val cat = Seq("org.spire-math" %% "cats" % "0.3.0")
+  val cat = Seq("org.typelevel" %% "cats" % "0.4.1")
 
-  val kittens = Seq("com.milessabin" %% "kittens" % "1.0.0-SNAPSHOT")
+  val kittens = Seq("com.milessabin" %% "kittens" % "1.0.0-M1")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
