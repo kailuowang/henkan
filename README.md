@@ -6,7 +6,7 @@
 
 # Henkan [変換]
 
-A tiny library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
+A small library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
 
 Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
@@ -14,7 +14,7 @@ Henkan can
 
 1. transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
 
-  Features:
+  *Features*:
 
   a. quick transformation when the source case class has all the fields the target case class has: e.g. `a.to[B]()`
 
@@ -24,7 +24,7 @@ Henkan can
 
 2. transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
 
-  Features:
+  *Features*:
 
   a. transform any runtime data type to an arbitrary Monad of taget case class - you just need to provide some `FieldReader`s that can read primitive values out of the runtime data type given a field name.
 
