@@ -10,7 +10,7 @@ object Dependencies {
 
   val cat = Seq("org.typelevel" %% "cats" % "0.5.0")
 
-  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M2")
+  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M3")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
@@ -18,7 +18,7 @@ object Dependencies {
   )
 
   val commonSettings = Seq(
-    scalaVersion in ThisBuild := "2.11.7",
+    scalaVersion in ThisBuild := "2.11.8",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       Resolver.sonatypeRepo("snapshots"),
@@ -27,7 +27,8 @@ object Dependencies {
     ),
     libraryDependencies ++= kittens,
 
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1"),
+    addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
   )
 
   val testSettings = commonSettings ++ Seq(

@@ -81,7 +81,7 @@ people: People = People(John,49 Wall St.)
 ```
 ```scala
 scala> people.to[Employee]() //missing DoB
-<console>:21: error:
+<console>:22: error:
     You have not provided enough arguments to convert from People to Employee.
     shapeless.HNil
 
@@ -91,7 +91,7 @@ scala> people.to[Employee]() //missing DoB
 Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:21: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
+<console>:22: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
 error after rewriting to henkan.`package`.syntax.convert.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
@@ -133,7 +133,15 @@ Now you can extract any case classes with String or Int fields from the Map[Stri
 
 ```scala
 scala> extract[Option, MyParent](data)
-res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
+<console>:30: error:
+    For all fields in MyParent of type FT, there must be an implicit FieldReader[Option, scala.collection.immutable.Map[String,Any], FT].
+    Option needs to have instances of cats.FlatMap and cats.Functor.
+    If case class with default value is needed, Option needs to have instances of alleyCats.EmptyK and cats.Monad
+    To extract hierarchical case classes, you need to have an implicit FieldReader[Option, scala.collection.immutable.Map[String,Any], scala.collection.immutable.Map[String,Any]], that is,
+    extract a sub scala.collection.immutable.Map[String,Any] out of a field of scala.collection.immutable.Map[String,Any].
+
+       extract[Option, MyParent](data)
+                                ^
 ```
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/example) including a typesafe config transformer
