@@ -133,15 +133,7 @@ Now you can extract any case classes with String or Int fields from the Map[Stri
 
 ```scala
 scala> extract[Option, MyParent](data)
-<console>:30: error:
-    For all fields in MyParent of type FT, there must be an implicit FieldReader[Option, scala.collection.immutable.Map[String,Any], FT].
-    Option needs to have instances of cats.FlatMap and cats.Functor.
-    If case class with default value is needed, Option needs to have instances of alleyCats.EmptyK and cats.Monad
-    To extract hierarchical case classes, you need to have an implicit FieldReader[Option, scala.collection.immutable.Map[String,Any], scala.collection.immutable.Map[String,Any]], that is,
-    extract a sub scala.collection.immutable.Map[String,Any] out of a field of scala.collection.immutable.Map[String,Any].
-
-       extract[Option, MyParent](data)
-                                ^
+res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
 ```
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/example) including a typesafe config transformer

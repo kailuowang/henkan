@@ -34,7 +34,12 @@ object Extractor {
     def apply(fieldName: FieldName): Kleisli[F, S, T]
   }
 
-  trait lowPriorityFieldExtractor {
+  trait MkFieldExtractor1 {
+    def apply[F[_], S, T](
+      fr: FieldReader[F, S, T]
+    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
+      def apply(fieldName: FieldName) = fr.apply(fieldName)
+    }
 
     /**
      * Intended to provide support for recursively extract high kinded type containing case classes
@@ -54,18 +59,16 @@ object Extractor {
     ): FieldExtractor[F, S, G[T]] = FieldExtractor(fr.flatMapK[G, RG, S, T](ex.extract))
   }
 
-  object FieldExtractor extends lowPriorityFieldExtractor {
+  trait MkFieldExtractor0 extends MkFieldExtractor1 {
+
     implicit def mk[F[_], S, T](
       implicit
       fr: FieldReader[F, S, T]
     ): FieldExtractor[F, S, T] = apply(fr)
 
-    implicit def apply[F[_], S, T](
-      fr: FieldReader[F, S, T]
-    ): FieldExtractor[F, S, T] = new FieldExtractor[F, S, T] {
-      def apply(fieldName: FieldName) = fr.apply(fieldName)
-    }
+  }
 
+  object FieldExtractor extends MkFieldExtractor0 {
     /**
      * Recursively extract sub case class fields
      * this intermediate is needed so that compiler can
@@ -94,11 +97,11 @@ object Extractor {
     ) = at[FieldWithDefault[K, V]] { f ⇒
       field[K](fr(wk.value.name))
     }
+
   }
 
-  object fieldExtractorMapper extends lowPriorityMapper {
+  trait fieldExtractorMapper0 extends lowPriorityMapper {
     import labelled.field
-
     implicit def caseFieldWithoutDefault[K <: Symbol, V, S, F[_]](
       implicit
       fr: FieldExtractor[F, S, V],
@@ -106,6 +109,10 @@ object Extractor {
     ) = at[FieldWithoutDefault[K, V]] { f ⇒
       field[K](fr(wk.value.name))
     }
+  }
+
+  object fieldExtractorMapper extends fieldExtractorMapper0 {
+    import labelled.field
 
     implicit def caseFieldWithDefault[K <: Symbol, V, S, F[_]](
       implicit
@@ -123,7 +130,6 @@ object Extractor {
           fv
       })
     }
-
   }
 
   implicit def mkExtractor[F[_], S, T, Repr <: HList, FDs <: HList, ReprKleisli <: HList](

@@ -33,12 +33,6 @@ object TypesafeConfig {
 
     import Lib._
 
-    case class FarmSettings(
-      name: String,
-      barnHouse: BarnHouseSettings,
-      numOfAnimals: Int
-    )
-
     case class BarnHouseSettings(
       footage: Double,
       openHours: Duration,
@@ -57,6 +51,11 @@ object TypesafeConfig {
 
     val cfg = ConfigFactory.parseString(cfgString)
 
+    case class FarmSettings(
+      name: String,
+      barnHouse: BarnHouseSettings,
+      numOfAnimals: Int
+    )
     val result: Option[FarmSettings] = extract[Option, FarmSettings](cfg)
 
     assert(result.contains(
@@ -68,6 +67,29 @@ object TypesafeConfig {
           false
         ),
         5
+      )
+    ))
+
+    case class FarmSettings2(
+      name: String,
+      numOfAnimals: Int,
+      barnHouse: BarnHouseSettings
+    )
+
+    //todo: this line shouldn't be needed, fix github issue #15 to fix this
+    implicit val eb = Extractor[Option, Config, BarnHouseSettings]
+
+    val result2: Option[FarmSettings2] = extract[Option, FarmSettings2](cfg)
+
+    assert(result2.contains(
+      FarmSettings2(
+        "Old McDonald",
+        5,
+        BarnHouseSettings(
+          2045.5d,
+          Duration.ofHours(8),
+          false
+        )
       )
     ))
   }
