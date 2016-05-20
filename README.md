@@ -34,7 +34,7 @@ Henkan can
 
 ## Known issues 
 
-* [https://github.com/kailuowang/henkan/issues/15](Error when the last field is a nested class)
+* [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
 
 ## Get started 
 
