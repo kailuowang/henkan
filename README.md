@@ -32,6 +32,10 @@ Henkan can
 
   c. support recursive case classes, i.e. case class that has case class fields.
 
+## Known issues 
+
+* [https://github.com/kailuowang/henkan/issues/15](Error when the last field is a nested class)
+
 ## Get started 
 
 ```scala
