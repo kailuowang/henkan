@@ -52,4 +52,11 @@ class ConverterSpec extends Specification {
 
     f.to[Foo2].set(bar2 = 3) === Foo2("bR", 3)
   }
+
+  "only use default if not present" >> {
+    case class Foo(bar: String)
+    case class Foo2(bar: String = "def")
+    val f = Foo("abc")
+    f.to[Foo2]() === Foo2("abc")
+  }
 }

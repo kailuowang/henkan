@@ -20,13 +20,13 @@ object Converter {
     ingen: LabelledGeneric.Aux[In, RIn],
     outgen: LabelledGeneric.Aux[Out, ROut],
     defaults: Default.AsRecord.Aux[Out, Defaults],
-    mergerD: Merger.Aux[RIn, Defaults, MD],
+    mergerD: Merger.Aux[Defaults, RIn, MD],
     mergerA: Merger.Aux[MD, Args, MR],
     intersection: Intersection.Aux[MR, ROut, IR],
     align: Align[IR, ROut]
   ): Converter[Args, In, Out] = new Converter[Args, In, Out] {
     def apply(args: Args, in: In) = {
-      outgen.from(align(intersection(mergerA(mergerD(ingen.to(in), defaults()), args))))
+      outgen.from(align(intersection(mergerA(mergerD(defaults(), ingen.to(in)), args))))
     }
   }
 }
