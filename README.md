@@ -8,6 +8,10 @@
 
 A small proof-of-concept library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
 
+## Known issues
+
+* [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
+
 Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
 Henkan can
@@ -31,10 +35,6 @@ Henkan can
   b. supports default value.
 
   c. support recursive case classes, i.e. case class that has case class fields.
-
-## Known issues 
-
-* [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
 
 ## Get started 
 
@@ -85,7 +85,7 @@ people: People = People(John,49 Wall St.)
 ```
 ```scala
 scala> people.to[Employee]() //missing DoB
-<console>:22: error:
+<console>:22: error: 
     You have not provided enough arguments to convert from People to Employee.
     shapeless.HNil
 

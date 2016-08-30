@@ -1,6 +1,6 @@
 package henkan
 
-import shapeless.ops.record.RemoveAll
+import shapeless.ops.hlist.Union
 import shapeless.{LabelledGeneric, HList}
 
 import scala.annotation.implicitNotFound
@@ -12,6 +12,6 @@ object CheckFields {
   implicit def check[Fields <: HList, T, Repr <: HList](
     implicit
     gen: LabelledGeneric.Aux[T, Repr],
-    s: RemoveAll[Repr, Fields]
+    s: Union.Aux[Repr, Fields, Repr]
   ): CheckFields[Fields, T] = null
 }
