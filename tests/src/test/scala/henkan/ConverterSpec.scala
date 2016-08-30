@@ -1,8 +1,10 @@
 package henkan
 
+import java.time.LocalDateTime
+
 import henkan.syntax.convert._
 import org.specs2.mutable.Specification
-import shapeless.ops.record.{RemoveAll, Keys, SelectAll}
+import shapeless.test.illTyped
 
 class ConverterSpec extends Specification {
   "convert to class with less fields" >> {
@@ -58,5 +60,92 @@ class ConverterSpec extends Specification {
     case class Foo2(bar: String = "def")
     val f = Foo("abc")
     f.to[Foo2]() === Foo2("abc")
+  }
+
+  "does not compile when missing fields" >> {
+    case class Foo(bar: String)
+    case class Foo2(bar: String, bar2: Int)
+    val f = Foo("abc")
+    illTyped { """ f.to[Foo2]() """ }
+    f === f
+  }
+
+  "does not compile when missing fields" >> {
+    case class Foo(bar: String)
+    case class Foo2(bar: String, bar2: Int)
+    val f = Foo("abc")
+    illTyped { """ f.to[Foo2]() """ }
+    f === f
+  }
+
+  "does not compile when setting the wrong fields" >> {
+    case class Foo(bar: String)
+    case class Foo2(bar: String, bar2: Int)
+    val f = Foo("abc")
+    illTyped { """ f.to[Foo2].set(bar3 = 3) """ }
+    f.to[Foo2].set(bar2 = 3) === Foo2("abc", 3)
+  }
+
+  "does not compile when setting a default field with wrong type" >> {
+    case class Foo(bar: String)
+    case class Foo2(bar: String, bar2: Int = 2)
+    val f = Foo("abc")
+    illTyped { """ f.to[Foo2].set(bar3 = "3") """ }
+    f.to[Foo2]() === Foo2("abc", 2)
+  }
+
+  "compile with resonable time when setting the wrong fields with many fields" >> {
+    case class Foo(
+      bar1: String,
+      bar2: Int,
+      bar3: Boolean,
+      bar4: LocalDateTime,
+      bar5: List[String],
+      bar6: Set[Boolean],
+      bar7: Double,
+      bar8: Long,
+      bar9: Char,
+      bar10: Float,
+      bar11: String,
+      bar12: Map[String, Int],
+      bar13: Boolean,
+      bar14: LocalDateTime,
+      bar15: List[String],
+      bar16: Set[Boolean],
+      bar17: Double,
+      bar18: Long,
+      bar19: Char,
+      bar20: Float
+    )
+
+    case class Foo2(
+      bar1: String,
+      bar2: Int,
+      bar3: Boolean,
+      bar4: LocalDateTime,
+      bar5: List[String],
+      bar6: Set[Boolean],
+      bar7: Double,
+      bar8: Long,
+      bar9: Char,
+      bar10: Float,
+      bar11: String,
+      bar12: Map[String, Int],
+      bar13: Boolean,
+      bar14: LocalDateTime,
+      bar15: List[String],
+      bar16: Set[Boolean],
+      bar17: Double,
+      bar18: Long,
+      bar19: Char,
+      bar20: Float,
+      bar21: String
+    )
+    val now = LocalDateTime.now
+    val f = Foo("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f)
+
+    //this should compile
+    illTyped { """ f.to[Foo2].set(bar21 = 4) """ }
+    f.to[Foo2].set(bar21 = "big") === Foo2("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "big")
   }
 }

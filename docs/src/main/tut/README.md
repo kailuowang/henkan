@@ -8,6 +8,10 @@
 
 A small proof-of-concept library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
 
+## Known issues
+
+* [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
+
 Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
 Henkan can
