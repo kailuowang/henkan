@@ -3,7 +3,7 @@
  * https://gist.github.com/joprice/c9f9c42fe0e99c9ada87
  */
 
-package henkan
+package henkan.convert
 import shapeless._, shapeless.ops.record._, shapeless.ops.hlist._
 
 @annotation.implicitNotFound("""
@@ -31,7 +31,7 @@ object Converter {
   }
 }
 
-trait ConverterSyntax {
+trait Syntax {
 
   implicit class convert[InT <: Product](in: InT) {
     class ConvertTo[OutT] {
@@ -48,4 +48,4 @@ trait ConverterSyntax {
   }
 }
 
-object ConverterSyntax extends ConverterSyntax
+object Syntax extends Syntax

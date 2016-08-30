@@ -31,10 +31,8 @@ object Dependencies {
     addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
   )
 
-  val testSettings = commonSettings ++ Seq(
+  val settings = commonSettings ++ Seq(
     libraryDependencies ++= test
   )
-
-  val settings = commonSettings
 
 }

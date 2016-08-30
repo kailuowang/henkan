@@ -63,8 +63,8 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
 ```scala
-scala> import henkan.syntax.convert._
-import henkan.syntax.convert._
+scala> import henkan.convert.Syntax._
+import henkan.convert.Syntax._
 
 scala> employee.to[UnionMember]()
 res4: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
@@ -96,7 +96,7 @@ Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
 <console>:22: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
-error after rewriting to henkan.`package`.syntax.convert.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
+error after rewriting to henkan.convert.Syntax.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
                                    ^
