@@ -24,14 +24,26 @@ object ReasonableFuture extends henkan.k.Definitions {
 object MyApp extends App {
   import ReasonableFuture._
   import K._
-  case class Result(l: Int, v: String)
+  case class Report(l: Int, v: String)
 
   val kl: K[String, Int] = K(_.length)
 
   val kv: K[String, String] = K(identity)
 
-  val myK: K[String, Result] = compose(l = kl, v = kv).to[Result]
+  val kIsOdd: K[Int, Boolean] = K(_ % 2 == 1)
 
-  myK.run(args.head).map(println)
+  val kOddLength: K[String, Boolean] = kl andThen kIsOdd
+
+  val reportK: K[String, Report] = compose(l = kl, v = kv).to[Report]
+
+  val getArgsHead: K[Array[String], String] = (a: Array[String]) ⇒
+    a.headOption.fold(Result.left[String](UserError("No args")))(Result.pure)
+
+  val myK = getArgsHead andThen reportK
+
+  myK.run(args).fold(
+    println,
+    println
+  )
 
 }

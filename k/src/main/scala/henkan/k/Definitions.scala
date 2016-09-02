@@ -25,6 +25,11 @@ trait Definitions {
 
   object K extends KFunctions with KOps
 
+  object Result {
+    def left[T](r: Reason): Result[T] = XorT.left[Effect, Reason, T](effectApplicative.pure(r))
+    def pure[T] = XorT.pure[Effect, Reason, T] _
+  }
+
   object KFunctions extends KFunctions
   trait KFunctions {
 
