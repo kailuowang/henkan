@@ -4,6 +4,8 @@ import java.time.Duration
 
 import com.typesafe.config._
 import henkan.extractor._
+import cats.implicits._
+import alleycats.std.OptionInstances._
 
 object TypesafeConfig {
 
@@ -28,6 +30,7 @@ object TypesafeConfig {
   }
 
   object ExampleUsage {
+    import Lib._
 
     case class BarnHouseSettings(
       footage: Double,

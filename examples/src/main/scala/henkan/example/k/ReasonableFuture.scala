@@ -1,13 +1,14 @@
 package henkan.example.k
 
 import cats.Monad
-
+import cats.arrow.NaturalTransformation
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 object ReasonableFuture extends henkan.k.Definitions {
   sealed trait MyReason
 
-  case class ExceptionOccurred(msg: String, ex: Option[Exception]) extends MyReason
+  case class ExceptionOccurred(msg: Option[String], ex: Option[Throwable]) extends MyReason
   case class UserError(msg: String) extends MyReason
   case class Unavailable(missingThingy: String) extends MyReason
 
@@ -15,35 +16,23 @@ object ReasonableFuture extends henkan.k.Definitions {
 
   type Effect[X] = Future[X]
 
-  implicit def effectApplicative: Monad[Effect] = {
+  implicit val effectMonad: Monad[Effect] = {
     import scala.concurrent.ExecutionContext.Implicits.global
     cats.std.future.futureInstance
   }
+
+  object ResultTransformations {
+    implicit class optionToResult[A](self: Option[A]) {
+      def toResult(ifEmpty: Reason) = self.fold[Result[A]](Result.left(ifEmpty))(Result.pure)
+    }
+    implicit class tryToResult[A](self: Try[A]) {
+      def toResult(ifFail: PartialFunction[Throwable, Reason] = PartialFunction.empty): Result[A] =
+        self match {
+          case Success(a) ⇒ Result.pure(a)
+          case Failure(e) ⇒ Result.left[A](ifFail.lift(e).getOrElse(ExceptionOccurred(None, Some(e))))
+        }
+
+    }
+  }
 }
 
-object MyApp extends App {
-  import ReasonableFuture._
-  import K._
-  case class Report(l: Int, v: String)
-
-  val kl: K[String, Int] = K(_.length)
-
-  val kv: K[String, String] = K(identity)
-
-  val kIsOdd: K[Int, Boolean] = K(_ % 2 == 1)
-
-  val kOddLength: K[String, Boolean] = kl andThen kIsOdd
-
-  val reportK: K[String, Report] = compose(l = kl, v = kv).to[Report]
-
-  val getArgsHead: K[Array[String], String] = (a: Array[String]) ⇒
-    a.headOption.fold(Result.left[String](UserError("No args")))(Result.pure)
-
-  val myK = getArgsHead andThen reportK
-
-  myK.run(args).fold(
-    println,
-    println
-  )
-
-}
