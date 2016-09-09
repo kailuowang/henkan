@@ -6,11 +6,11 @@ object Dependencies {
     val specs2 = "3.6.6"
   }
 
-  val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.0")
+  val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.2")
 
-  val cat = Seq("org.typelevel" %% "cats" % "0.5.0")
+  val cat = Seq("org.typelevel" %% "cats" % "0.7.2")
 
-  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M3")
+  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M4")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
@@ -21,8 +21,6 @@ object Dependencies {
     scalaVersion in ThisBuild := "2.11.8",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
-      Resolver.sonatypeRepo("snapshots"),
-      "bintray/non" at "http://dl.bintray.com/non/maven",
       Resolver.bintrayRepo("scalaz", "releases")
     ),
     libraryDependencies ++= kittens,

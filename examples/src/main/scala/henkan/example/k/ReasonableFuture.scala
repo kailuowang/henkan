@@ -1,7 +1,6 @@
 package henkan.example.k
 
 import cats.Monad
-import cats.arrow.NaturalTransformation
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
@@ -18,7 +17,7 @@ object ReasonableFuture extends henkan.k.Definitions {
 
   implicit val effectMonad: Monad[Effect] = {
     import scala.concurrent.ExecutionContext.Implicits.global
-    cats.std.future.futureInstance
+    cats.instances.future.catsStdInstancesForFuture
   }
 
   object ResultTransformations {

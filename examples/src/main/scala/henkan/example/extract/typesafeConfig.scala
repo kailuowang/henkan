@@ -4,7 +4,8 @@ import java.time.Duration
 
 import com.typesafe.config._
 import henkan.extractor._
-import cats.implicits._
+import cats.syntax.all._
+import cats.instances.option._
 import alleycats.std.OptionInstances._
 
 object TypesafeConfig {
