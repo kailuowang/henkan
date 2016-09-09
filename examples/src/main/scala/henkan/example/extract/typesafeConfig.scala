@@ -1,9 +1,9 @@
-package henkan.example
+package henkan.example.extract
 
 import java.time.Duration
 
-import henkan.extractor._
 import com.typesafe.config._
+import henkan.extractor._
 import cats.implicits._
 import alleycats.std.OptionInstances._
 
@@ -30,7 +30,6 @@ object TypesafeConfig {
   }
 
   object ExampleUsage {
-
     import Lib._
 
     case class BarnHouseSettings(

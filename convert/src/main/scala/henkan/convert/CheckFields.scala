@@ -1,4 +1,4 @@
-package henkan
+package henkan.convert
 
 import shapeless.ops.hlist.Union
 import shapeless.{LabelledGeneric, HList}

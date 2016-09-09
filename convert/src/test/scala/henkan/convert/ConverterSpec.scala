@@ -1,8 +1,8 @@
-package henkan
+package henkan.convert
 
 import java.time.LocalDateTime
 
-import henkan.syntax.convert._
+import henkan.convert.Syntax._
 import org.specs2.mutable.Specification
 import shapeless.test.illTyped
 
