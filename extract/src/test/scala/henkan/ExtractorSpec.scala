@@ -2,10 +2,9 @@ package henkan.extractor
 
 import algebra.{Semigroup, Monoid}
 import alleycats.{Pure, EmptyK}
-import cats.{Functor, Unapply}
+import cats.{FlatMap, Functor, Unapply}
 import org.specs2.mutable.Specification
 import henkan.syntax.all._
-
 import cats.implicits._
 
 import scala.collection.generic.CanBuildFrom
@@ -31,6 +30,19 @@ class ExtractorSpec extends Specification {
     extract[Option, MyClass](Map("foo" → "a", "bar" → "2")) must beSome(MyClass("a", 2))
 
     extract[Option, MyClass](Map("foo" → "a")) must beNone
+
+  }
+
+  "extract Either from String map" >> {
+    type ES[T] = Either[String, T]
+
+    implicit val frString = FieldReader((m: Map[String, String], field: String) ⇒ m.get(field).toRight(s"$field not found"))
+
+    implicit val frInt: FieldReaderMapper[String, Either[String, Int]] = FieldReaderMapper((s: String) ⇒ Try(s.toInt).toOption.toRight(s"incorrect format of $s"))
+
+    extract[ES, MyClass](Map("foo" → "a", "bar" → "2")) must beRight(MyClass("a", 2))
+
+    extract[ES, MyClass](Map("foo" → "a")) must beLeft("bar not found")
 
   }
 
