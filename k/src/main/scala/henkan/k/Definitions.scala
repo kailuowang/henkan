@@ -90,7 +90,6 @@ trait Definitions {
       def contraMapR = new contraMapRCls
 
     }
-
   }
 
   trait KHListOps {
