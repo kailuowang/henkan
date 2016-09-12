@@ -90,16 +90,12 @@ object RequestParser {
 object ManualParser extends RequestParser {
   import RequestParser._
 
-  def parse[T](key: String, strToValue: K[String, T]): Parser[T] =
-    K.of((req: Request) ⇒
-      req.get(key).toResult(UserError(s"missing value of $key"))) andThen strToValue
-
   private lazy val ctbi = composeTo[BasicInfo]
-  lazy val baseInformationParserManual: Parser[BasicInfo] = ctbi(
-    name = parse("name", K(identity)),
-    address = parse("address", K(identity)),
-    age = parse("age", (a: String) ⇒ Try(a.toInt).toResult()),
-    sex = parse("sex", toSex)
+  lazy val baseInformationParser: Parser[BasicInfo] = ctbi(
+    name = stringParser("name"),
+    address = stringParser("address"),
+    age = stringParser("age") andThen (a ⇒ Try(a.toInt).toResult()),
+    sex = stringParser("sex") andThen toSex
   )
 
 }
