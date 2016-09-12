@@ -4,7 +4,7 @@
  */
 
 package henkan.convert
-import shapeless._, shapeless.ops.record._, shapeless.ops.hlist._
+import shapeless._
 
 @annotation.implicitNotFound("""
     You have not provided enough arguments to convert from ${In} to ${Out}.
@@ -15,18 +15,15 @@ trait Converter[Args, In, Out] {
 }
 
 object Converter {
-  implicit def makeConvertible[Args <: HList, In, RIn <: HList, Out, Defaults <: HList, ROut <: HList, MD <: HList, MR <: HList, IR <: HList](
+  implicit def makeConvertible[Args <: HList, In, RIn <: HList, Out, Defaults <: HList, ROut <: HList](
     implicit
     ingen: LabelledGeneric.Aux[In, RIn],
     outgen: LabelledGeneric.Aux[Out, ROut],
     defaults: Default.AsRecord.Aux[Out, Defaults],
-    mergerD: Merger.Aux[Defaults, RIn, MD],
-    mergerA: Merger.Aux[MD, Args, MR],
-    intersection: Intersection.Aux[MR, ROut, IR],
-    align: Align[IR, ROut]
+    build: BuildFrom[Args, RIn, Defaults, ROut]
   ): Converter[Args, In, Out] = new Converter[Args, In, Out] {
     def apply(args: Args, in: In) = {
-      outgen.from(align(intersection(mergerA(mergerD(defaults(), ingen.to(in)), args))))
+      outgen.from(build(args, ingen.to(in), defaults()))
     }
   }
 }
