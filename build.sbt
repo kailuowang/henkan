@@ -9,13 +9,16 @@ lazy val henkan = project.in(file("."))
 lazy val extract = project
   .settings(moduleName := "henkan-extract")
   .settings(libModuleSettings:_*)
+  .settings(Dependencies.withKittens:_*)
 
 lazy val convert = project
   .settings(moduleName := "henkan-convert")
   .settings(libModuleSettings:_*)
+  .settings(libraryDependencies ++= Dependencies.shapeless)
 
 lazy val k = project
   .settings(moduleName := "henkan-k")
+  .settings(Dependencies.withKittens:_*)
   .settings(libModuleSettings:_*)
 
 
@@ -25,6 +28,7 @@ lazy val examples = project
   .settings(moduleName := "henkan-examples")
   .settings(Common.settings:_*)
   .settings(Dependencies.settings:_*)
+  .settings(Dependencies.withKittens:_*)
   .settings(Common.noPublishing: _*)
   .settings(Format.settings:_*)
   .settings(

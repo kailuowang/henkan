@@ -8,13 +8,16 @@ object Dependencies {
 
   val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.2")
 
-  val cat = Seq("org.typelevel" %% "cats" % "0.7.2")
-
   val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M4")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
     "org.specs2" %% "specs2-mock" % Versions.specs2 % "test"
+  )
+
+  val withKittens = Seq(
+    libraryDependencies ++= kittens,
+    addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
   )
 
   val commonSettings = Seq(
@@ -23,10 +26,7 @@ object Dependencies {
       Resolver.sonatypeRepo("releases"),
       Resolver.bintrayRepo("scalaz", "releases")
     ),
-    libraryDependencies ++= kittens,
-
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1"),
-    addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   )
 
   val settings = commonSettings ++ Seq(
