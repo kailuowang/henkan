@@ -96,6 +96,14 @@ class ConverterSpec extends Specification {
     f.to[Foo2]() === Foo2("abc", 2)
   }
 
+  "convert  when the field name is the same but value is of different type" >> {
+    case class Foo(bar: String, bar2: String)
+    case class Foo2(bar: String, bar2: Int)
+    val f = Foo("abc", "efg")
+    illTyped { """ f.to[Foo2]() """ }
+    f.to[Foo2].set(bar2 = 2) === Foo2("abc", 2)
+  }
+
   "compile with resonable time when setting the wrong fields with many fields" >> {
     case class Foo(
       bar1: String,
