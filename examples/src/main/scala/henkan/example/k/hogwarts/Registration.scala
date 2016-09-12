@@ -7,7 +7,7 @@ import ResultTransformations._
 
 import henkan.example.k.hogwarts.Services.{AssignDormRoomRequest, AssignMentorRequest, GetWandRequest}
 import Domain._
-import henkan.extractor.{FieldReaderMapper, FieldReader}
+import henkan.extractor._
 
 import scala.util.Try
 
@@ -47,51 +47,75 @@ object Services {
 }
 
 object Registration {
-  import Parsers._
+  import AutoParsers._
 
   def register(services: Services): K[Request, RegistrationRecord] =
     for {
       bi ← baseInformationParser
       mentor ← services.mentorService.contraMapR(
         wand = pure[Request](bi.to[GetWandRequest]()) andThen services.wandService,
-        specialty = parseSpecialty
+        specialty = stringParser("specialty") andThen toSpecialty
       )
       room ← pure[Request](bi.to[AssignDormRoomRequest].set(mentor = mentor)) andThen services.dormService
     } yield RegistrationRecord(bi, mentor, room)
 }
 
-object Parsers {
-  type Parser[T] = K[Request, T]
+trait RequestParser {
 
-  def partialParser[T](pf: PartialFunction[String, T]): K[String, T] =
+  def partialParseString[T](pf: PartialFunction[String, T]): K[String, T] =
     (a: String) ⇒
       pf.lift(a).toResult(UserError(s"Incorrect format $a"))
 
-  def parse[T](key: String, strToValue: K[String, T]): Parser[T] =
-    K.of((req: Request) ⇒
-      req.get(key).toResult(UserError(s"missing value of $key"))) andThen strToValue
+  def stringParser(key: String): K[Request, String] = K.of((req: Request) ⇒
+    req.get(key).toResult(UserError(s"missing value of $key")))
 
-  private lazy val gb = composeTo[BasicInfo]
-  lazy val baseInformationParser: Parser[BasicInfo] = gb(
-    name = parse("name", K(identity)),
-    address = parse("address", K(identity)),
-    age = parse("age", (a: String) ⇒ Try(a.toInt).toResult()),
-    sex = parse("sex", sexParser)
-  )
-
-  lazy val sexParser: K[String, Sex] = partialParser {
+  lazy val toSex: K[String, Sex] = partialParseString {
     case "F" ⇒ Female
     case "M" ⇒ Male
   }
 
-  lazy val parseSpecialty: Parser[Specialty] = parse("specialty", specialtyParser)
-
-  lazy val specialtyParser: K[String, Specialty] = partialParser {
+  lazy val toSpecialty: K[String, Specialty] = partialParseString {
     case "Fire"  ⇒ Fire
     case "Ice"   ⇒ Ice
     case "Air"   ⇒ Air
     case "Earth" ⇒ Earth
   }
+
+}
+
+object RequestParser {
+  type Parser[T] = K[Request, T]
+}
+
+object ManualParser extends RequestParser {
+  import RequestParser._
+
+  def parse[T](key: String, strToValue: K[String, T]): Parser[T] =
+    K.of((req: Request) ⇒
+      req.get(key).toResult(UserError(s"missing value of $key"))) andThen strToValue
+
+  private lazy val ctbi = composeTo[BasicInfo]
+  lazy val baseInformationParserManual: Parser[BasicInfo] = ctbi(
+    name = parse("name", K(identity)),
+    address = parse("address", K(identity)),
+    age = parse("age", (a: String) ⇒ Try(a.toInt).toResult()),
+    sex = parse("sex", toSex)
+  )
+
+}
+
+object AutoParsers extends RequestParser {
+  import RequestParser._
+
+  implicit val frString: FieldReader[Result, Request, String] = stringParser _
+
+  implicit val frInt: FieldReaderMapper[String, Result[Int]] =
+    (s: String) ⇒ Try(s.toInt).toResult()
+
+  implicit val frSex: FieldReaderMapper[String, Result[Sex]] =
+    toSex.run
+
+  lazy val baseInformationParser: Parser[BasicInfo] = Extractor[Result, Request, BasicInfo].apply()
 
 }
 

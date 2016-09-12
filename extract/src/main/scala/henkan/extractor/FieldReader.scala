@@ -11,12 +11,12 @@ import scala.collection.generic.CanBuildFrom
 trait FieldReader[F[_], S, T] extends ((FieldName) ⇒ Kleisli[F, S, T]) {
   def map[U](f: T ⇒ U)(implicit unapply: Unapply.Aux1[Functor, F[T], F, T]): FieldReader[F, S, U] = {
     implicit val functor: Functor[F] = unapply.TC
-    FieldReader(andThen(_.map(f)))
+    FieldReader.fromKleisli(andThen(_.map(f)))
   }
 
   def flatMap[U](f: T ⇒ F[U])(implicit unapply: Unapply.Aux1[FlatMap, F[T], F, T]): FieldReader[F, S, U] = {
     implicit val fm: FlatMap[F] = unapply.TC
-    FieldReader(andThen(_.flatMapF(f)))
+    FieldReader.fromKleisli(andThen(_.flatMapF(f)))
   }
 
   /**
@@ -77,7 +77,7 @@ object FieldReader extends lowPriorityMk {
       Kleisli(s ⇒ f(s, fieldName))
   }
 
-  implicit def apply[F[_], S, T](f: FieldName ⇒ Kleisli[F, S, T]) = new FieldReader[F, S, T] {
+  implicit def fromKleisli[F[_], S, T](f: FieldName ⇒ Kleisli[F, S, T]) = new FieldReader[F, S, T] {
     def apply(fieldName: FieldName): Kleisli[F, S, T] = f(fieldName)
   }
 
