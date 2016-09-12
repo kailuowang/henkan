@@ -4,7 +4,7 @@ import cats.Monad
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-object ReasonableFuture extends henkan.k.Definitions {
+object ReasonableFuture extends henkan.k.DefinitionWithEitherT {
   sealed trait MyReason
 
   case class ExceptionOccurred(msg: Option[String], ex: Option[Throwable]) extends MyReason
