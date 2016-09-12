@@ -47,26 +47,26 @@ object Services {
 }
 
 object Registration {
-  import AutoParsers._
+  import AutoExtractors._
 
   def register(services: Services): K[Request, RegistrationRecord] =
     for {
-      bi ← baseInformationParser
+      bi ← baseInformationExtractor
       mentor ← services.mentorService.contraMapR(
         wand = pure[Request](bi.to[GetWandRequest]()) andThen services.wandService,
-        specialty = stringParser("specialty") andThen toSpecialty
+        specialty = stringExtractor("specialty") andThen toSpecialty
       )
       room ← pure[Request](bi.to[AssignDormRoomRequest].set(mentor = mentor)) andThen services.dormService
     } yield RegistrationRecord(bi, mentor, room)
 }
 
-trait RequestParser {
+trait RequestExtractor {
 
   def partialParseString[T](pf: PartialFunction[String, T]): K[String, T] =
     (a: String) ⇒
       pf.lift(a).toResult(UserError(s"Incorrect format $a"))
 
-  def stringParser(key: String): K[Request, String] = K.of((req: Request) ⇒
+  def stringExtractor(key: String): K[Request, String] = K.of((req: Request) ⇒
     req.get(key).toResult(UserError(s"missing value of $key")))
 
   lazy val toSex: K[String, Sex] = partialParseString {
@@ -83,31 +83,21 @@ trait RequestParser {
 
 }
 
-object RequestParser {
-  type Parser[T] = K[Request, T]
-}
-
-object ManualParser extends RequestParser {
-  import RequestParser._
-
-  def parse[T](key: String, strToValue: K[String, T]): Parser[T] =
-    K.of((req: Request) ⇒
-      req.get(key).toResult(UserError(s"missing value of $key"))) andThen strToValue
+object ManualExtractor$ extends RequestExtractor {
 
   private lazy val ctbi = composeTo[BasicInfo]
-  lazy val baseInformationParserManual: Parser[BasicInfo] = ctbi(
-    name = parse("name", K(identity)),
-    address = parse("address", K(identity)),
-    age = parse("age", (a: String) ⇒ Try(a.toInt).toResult()),
-    sex = parse("sex", toSex)
+  lazy val baseInformationParser: K[Request, BasicInfo] = ctbi(
+    name = stringExtractor("name"),
+    address = stringExtractor("address"),
+    age = stringExtractor("age") andThen (a ⇒ Try(a.toInt).toResult()),
+    sex = stringExtractor("sex") andThen toSex
   )
 
 }
 
-object AutoParsers extends RequestParser {
-  import RequestParser._
+object AutoExtractors extends RequestExtractor {
 
-  implicit val frString: FieldReader[Result, Request, String] = stringParser _
+  implicit val frString: FieldReader[Result, Request, String] = stringExtractor _
 
   implicit val frInt: FieldReaderMapper[String, Result[Int]] =
     (s: String) ⇒ Try(s.toInt).toResult()
@@ -115,7 +105,7 @@ object AutoParsers extends RequestParser {
   implicit val frSex: FieldReaderMapper[String, Result[Sex]] =
     toSex.run
 
-  lazy val baseInformationParser: Parser[BasicInfo] = Extractor[Result, Request, BasicInfo].apply()
+  lazy val baseInformationExtractor: K[Request, BasicInfo] = Extractor[Result, Request, BasicInfo].apply()
 
 }
 

@@ -6,17 +6,33 @@
 
 # Henkan [変換]
 
-A small proof-of-concept library that provides generic and yet typesafe transformation between case classes, case class and runtime data types (Such as Map, JsonObject, Typesafe.Config, etc) .
+A small library to experiment generic functional programming with [kittens][kittens], [shapeless][shapeless] and [cats][cats].
 
-## Known issues
 
-* [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
+## Contributors and participation
 
-Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
+henkan is currently maintained by [Kailuo Wang][kailuowang].
 
-Henkan can
+The henkan project supports the [Typelevel][typelevel] [code of conduct][typelevel-coc]
+and wants all of its channels (Gitter, GitHub, etc.) to be welcoming environments for
+everyone.
 
-1. transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
+## License
+
+henkan is licensed under the [Apache License, Version 2.0][apache2]
+(the "License"); you may not use this software except in compliance with
+the License.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+## Modules
+
+1. `henkan.convert` - transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
 
   *Features*:
 
@@ -26,7 +42,7 @@ Henkan can
 
   c. use the default values of the target case classes if needed
 
-2. transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
+2. `henkan.extract` - transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
 
   *Features*:
 
@@ -36,12 +52,24 @@ Henkan can
 
   c. support recursive case classes, i.e. case class that has case class fields.
 
+  ### Known issues for this feature
+
+  * [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
+
+
+3. `henkan.k` building blocks for generic function compositions.
+
+
 ## Get started 
 
 ```scala
  resolvers += Resolver.bintrayRepo("kailuowang", "maven")
 
- libraryDependencies += "com.kailuowang" %% "henkan" % "0.1.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.0"
+
+ libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.0"
+
+ libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.0"
 ```
 
 ## Examples
@@ -140,5 +168,12 @@ scala> extract[Option, MyParent](data)
 res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
 ```
 
-### Other examples can be found in [examples](examples/src/main/scala/henkan/example) including a typesafe config transformer
+### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 
+[apache2]: http://www.apache.org/licenses/LICENSE-2.0
+[kailuowang]: http://twitter.com/kailuowang
+[typelevel]: http://typelevel.org/
+[typelevel-coc]: http://typelevel.org/conduct.html
+[kittens]: http://github.com/milessabin/kittens
+[shapeless]: http://github.com/milessabin/shapeless
+[cats]: http://github.com/typelevel/cats
