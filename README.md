@@ -29,7 +29,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Behind the scene, henkan uses [shapeless](https://github.com/milessabin/shapeless) [cats](https://github.com/typelevel/cats) and [kittens](https://github.com/milessabin/kittens). No marcos was used directly.
 
 ## Modules
 
