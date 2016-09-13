@@ -20,7 +20,7 @@ object Converter {
     ingen: LabelledGeneric.Aux[In, RIn],
     outgen: LabelledGeneric.Aux[Out, ROut],
     defaults: Default.AsRecord.Aux[Out, Defaults],
-    build: BuildFrom[Args, RIn, Defaults, ROut]
+    build: Merge3[Args, RIn, Defaults, ROut]
   ): Converter[Args, In, Out] = new Converter[Args, In, Out] {
     def apply(args: Args, in: In) = {
       outgen.from(build(args, ingen.to(in), defaults()))
