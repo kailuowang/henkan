@@ -26,7 +26,7 @@ object Dependencies {
       Resolver.sonatypeRepo("releases"),
       Resolver.bintrayRepo("scalaz", "releases")
     ),
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0")
   )
 
   val settings = commonSettings ++ Seq(
