@@ -69,7 +69,7 @@ limitations under the License.
 
  libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.0"
 
- libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.2.0"
 ```
 
 ## Examples
