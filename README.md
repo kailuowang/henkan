@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/coverage/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
-[![Stories in Ready](https://badge.waffle.io/kailuowang/henkan.svg?label=ready&title=Ready)](http://waffle.io/kailuowang/henkan)
 [ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan-convert/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan-convert/_latestVersion)
 
 # Henkan [変換]
@@ -65,11 +63,11 @@ limitations under the License.
 ```scala
  resolvers += Resolver.bintrayRepo("kailuowang", "maven")
 
- libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.1"
 
- libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.1"
 
- libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.2.1"
 ```
 
 ## Examples
