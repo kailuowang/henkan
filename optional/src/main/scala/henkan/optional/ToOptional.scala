@@ -16,7 +16,7 @@ trait ToOptional[From, To] {
 object ToOptional extends ToOptionalSyntax with MkToOptional
 
 trait ToOptionalSyntax {
-  final class fromPartial[From] private[optional](f: From) {
+  final class fromPartial[From] private[optional] (f: From) {
     def toOptional[To](implicit t: ToOptional[From, To]) = t(f)
   }
 

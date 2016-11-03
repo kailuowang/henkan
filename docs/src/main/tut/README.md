@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Codacy Badge](https://api.codacy.com/project/badge/coverage/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan-convert/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan-convert/_latestVersion)
+[![Coverage Status](https://coveralls.io/repos/github/kailuowang/henkan/badge.svg?branch=master)](https://coveralls.io/github/kailuowang/henkan?branch=master)
 
 # Henkan [変換]
 
