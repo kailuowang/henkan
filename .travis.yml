@@ -17,4 +17,4 @@ script:
 
 
 after_success:
-  - sbt coverageReport coverageAggregate codacyCoverage
+  - sbt coverageReport coverageAggregate coveralls
