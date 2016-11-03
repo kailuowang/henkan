@@ -30,7 +30,7 @@ class ValidateFromOptionalSpec extends Specification {
 
   "does not compile with missing fields" >> {
     illTyped("implicitly[ConvertFromOptional[MessageMissingB, Domain]]")
-    1 must_== 1
+    success
   }
 
   "translate instance with nested fields" >> {
