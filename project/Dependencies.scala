@@ -17,7 +17,7 @@ object Dependencies {
 
   val withKittens = Seq(
     libraryDependencies ++= kittens,
-    addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
+    addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full)
   )
 
   val commonSettings = Seq(

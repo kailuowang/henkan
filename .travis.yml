@@ -1,7 +1,7 @@
 language: scala
 
 scala:
-   - 2.11.7
+   - 2.11.8
 
 jdk:
    - oraclejdk8
@@ -17,4 +17,4 @@ script:
 
 
 after_success:
-  - sbt coverageReport coverageAggregate coveralls
+  - sbt ++$TRAVIS_SCALA_VERSION coverageReport coverageAggregate coveralls
