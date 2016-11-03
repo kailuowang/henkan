@@ -22,10 +22,11 @@ object ValidateFromOptional extends MkValidateFromOptional with ValidateFromOpti
 }
 
 trait ValidateFromOptionalSyntax {
-  case class validate[From](from: From) {
+  final class validatePartial[From] private[optional] (from: From) {
     def to[To](implicit c: ValidateFromOptional[From, To]) = c(from)
   }
 
+  def validate[From](f: From) = new validatePartial(f)
 }
 
 case class RequiredFieldMissing(fieldName: String)

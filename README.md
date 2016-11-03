@@ -227,7 +227,7 @@ scala> from(DomainWithMissingField("a")).toOptional[Message]
 res5: Message = Message(Some(a),None)
 ```
 
-`cats.optional` supports nested case classes as well. 
+`cats.optional` supports nested case classes as well.
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 
