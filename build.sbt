@@ -22,9 +22,15 @@ lazy val k = project
   .settings(libModuleSettings:_*)
 
 
+lazy val optional = project
+  .settings(moduleName := "henkan-optional")
+  .settings(Dependencies.withKittens:_*)
+  .settings(libModuleSettings:_*)
+
+
 lazy val examples = project
-  .dependsOn(extract, convert, k)
-  .aggregate(extract, convert, k)
+  .dependsOn(extract, convert, k, optional)
+  .aggregate(extract, convert, k, optional)
   .settings(moduleName := "henkan-examples")
   .settings(Common.settings:_*)
   .settings(Dependencies.settings:_*)
@@ -36,7 +42,7 @@ lazy val examples = project
   )
 
 lazy val docs = project
-  .dependsOn(extract, convert, k)
+  .dependsOn(extract, convert, k, optional)
   .settings(compile <<= (compile in Compile).dependsOn(tut))
   .settings(test <<= (test in Test).dependsOn(tut))
   .settings(moduleName := "henkan-docs")

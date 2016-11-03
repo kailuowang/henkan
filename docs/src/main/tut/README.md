@@ -1,8 +1,6 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/coverage/94b5ef789e73441ca101c5d0e083aef6)](https://www.codacy.com/app/kailuo-wang/henkan)
-[![Stories in Ready](https://badge.waffle.io/kailuowang/henkan.svg?label=ready&title=Ready)](http://waffle.io/kailuowang/henkan)
-[ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan-convert/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan-convert/_latestVersion)
 
 # Henkan [変換]
 
@@ -59,17 +57,20 @@ limitations under the License.
 
 3. `henkan.k` building blocks for generic function compositions.
 
+4. `henkan.optional` conversion between case classes with optional fields and case class with required fields.
 
 ## Get started 
 
 ```scala
  resolvers += Resolver.bintrayRepo("kailuowang", "maven")
 
- libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.1"
 
- libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.1"
 
- libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.0"
+ libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.1"
+
+ libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.2.1"
 ```
 
 ## Examples
@@ -152,6 +153,59 @@ Now you can extract any case classes with String or Int fields from the Map[Stri
 ```tut
 extract[Option, MyParent](data)
 ```
+
+### Transform between case classes with optional field
+
+`cats.optional` provides some facility to transform between case classes with optional fields and ones with required fields.
+Suppose you have two case classes: `Message` whose fields are optional and `Domain` whose fields are required
+
+```tut:silent:reset
+case class Message(a: Option[String], b: Option[Int])
+case class Domain(a: String, b: Int)
+```
+You can validate an instance of `Message` to a Validated `Domain`
+
+```tut:silent
+import cats.data.Validated
+import cats.implicits._
+import henkan.optional.syntax.fromOptional._
+```
+
+```tut
+validate(Message(Some("a"), Some(2))).to[Domain]
+
+validate(Message(Some("a"), None)).to[Domain]
+```
+
+The compilation will fail if the from case class doesn't have all fields the target case class needs
+```tut:silent
+
+case class MessageWithMissingField(a: Option[String])
+```
+
+```tut:fail
+validate(MessageWithMissingField(Some("a"))).to[Domain]
+```
+
+You can convert in the opposite direction as well
+```tut:silent
+import henkan.optional.syntax.toOptional._
+```
+
+```tut
+from(Domain("a", 2)).toOptional[Message]
+```
+
+Note that if you from case class does not have all the fields the target class has, they will be set as `None`
+
+```tut:silent
+case class DomainWithMissingField(a: String)
+```
+```tut
+from(DomainWithMissingField("a")).toOptional[Message]
+```
+
+`cats.optional` supports nested case classes as well.
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 
