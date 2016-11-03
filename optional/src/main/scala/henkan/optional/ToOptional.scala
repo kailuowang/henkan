@@ -8,6 +8,7 @@ import shapeless._
 import cats.syntax.functor._
 import scala.annotation.implicitNotFound
 
+@implicitNotFound("Cannot build conversion from ${From} to ${To}, possibly due to missing cats instances (`Functor` instances are needed to convert fields in containers)")
 trait ToOptional[From, To] {
   def apply(from: From): To
 }

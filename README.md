@@ -202,7 +202,7 @@ case class MessageWithMissingField(a: Option[String])
 
 ```scala
 scala> validate(MessageWithMissingField(Some("a"))).to[Domain]
-<console>:24: error: Cannot build conversion from MessageWithMissingField to Domain, possibly due to missing fields in MessageWithMissingField
+<console>:24: error: Cannot build conversion from MessageWithMissingField to Domain, possibly due to missing fields in MessageWithMissingField or missing cats instances (`Traverse` instances are needed to convert fields in containers)
        validate(MessageWithMissingField(Some("a"))).to[Domain]
                                                       ^
 ```
@@ -226,6 +226,8 @@ case class DomainWithMissingField(a: String)
 scala> from(DomainWithMissingField("a")).toOptional[Message]
 res5: Message = Message(Some(a),None)
 ```
+
+`cats.optional` supports nested case classes as well. 
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 

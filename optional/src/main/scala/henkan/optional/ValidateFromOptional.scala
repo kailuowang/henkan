@@ -11,7 +11,7 @@ import ValidateFromOptional.Result
 
 import scala.annotation.implicitNotFound
 
-@implicitNotFound("Cannot build conversion from ${From} to ${To}, possibly due to missing fields in ${From}")
+@implicitNotFound("Cannot build conversion from ${From} to ${To}, possibly due to missing fields in ${From} or missing cats instances (`Traverse` instances are needed to convert fields in containers)")
 trait ValidateFromOptional[From, To] {
   def apply(from: From): Result[To]
 }
