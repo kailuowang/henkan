@@ -34,4 +34,9 @@ class ToOptionalSpec extends Specification {
       )
   }
 
+  "convert to Message with required fields" >> {
+    from(DomainWithAllFieldsRequired("a", List(1))).toOptional[MessageWithRequiredField] must_==
+      MessageWithRequiredField(Some("a"), List(1))
+  }
+
 }

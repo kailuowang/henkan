@@ -17,4 +17,8 @@ object TestDomain {
   case class Domain(a: String, b: Int)
   case class DomainWithOptionalB(a: String, b: Option[Int])
   case class DomainMissingB(a: String)
+
+  case class MessageWithRequiredField(a: Option[String], b: List[Int])
+  case class DomainWithAllFieldsRequired(a: String, b: List[Int])
+
 }

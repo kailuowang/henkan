@@ -43,17 +43,24 @@ trait MkToOptional0 extends MkToOptional1 {
     def apply(from: FL): HNil = HNil
   }
 
-  implicit def mkConToOptional[FL <: HList, K, V, TL <: HList](
+  implicit def mkConToOptional[FL <: HList, K, V, FV, TL <: HList](
     implicit
     tailConvert: ToOptional[FL, TL],
-    headConvert: ToOptional[FL, FieldType[K, Option[V]]]
-  ): ToOptional[FL, FieldType[K, Option[V]] :: TL] = new ToOptional[FL, FieldType[K, Option[V]] :: TL] {
+    headConvert: ToOptional[FL, FieldType[K, FV]]
+  ): ToOptional[FL, FieldType[K, FV] :: TL] = new ToOptional[FL, FieldType[K, FV] :: TL] {
 
-    def apply(from: FL): FieldType[K, Option[V]] :: TL = {
+    def apply(from: FL): FieldType[K, FV] :: TL = {
       headConvert(from) :: tailConvert(from)
     }
   }
 
+  implicit def mkSingleRequiredToRequired[FL <: HList, K, V](
+    implicit
+    selector: Selector.Aux[FL, K, V]
+  ): ToOptional[FL, FieldType[K, V]] = new ToOptional[FL, FieldType[K, V]] {
+    def apply(from: FL): FieldType[K, V] =
+      field[K](selector(from))
+  }
 }
 
 trait MkToOptional1 extends MkToOptional2 {
@@ -65,9 +72,11 @@ trait MkToOptional1 extends MkToOptional2 {
       field[K](selector(from))
 
   }
+
 }
 
 trait MkToOptional2 extends MkToOptional3 {
+
   implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol, TV, FV, F[_]](
     implicit
     F: Functor[F],
