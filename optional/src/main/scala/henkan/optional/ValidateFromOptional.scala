@@ -37,10 +37,10 @@ trait MkValidateFromOptional extends MkValidateFromOptional0 {
     implicit
     genFrom: LabelledGeneric.Aux[From, FL],
     genTo: LabelledGeneric.Aux[To, TL],
-    convertHList: ValidateFromOptional[FL, TL]
+    convertHList: Lazy[ValidateFromOptional[FL, TL]]
   ) = new ValidateFromOptional[From, To] {
     def apply(from: From): ValidatedNel[RequiredFieldMissing, To] = {
-      convertHList(genFrom.to(from)).map(genTo.from)
+      convertHList.value(genFrom.to(from)).map(genTo.from)
     }
   }
 

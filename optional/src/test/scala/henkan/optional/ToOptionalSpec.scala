@@ -33,6 +33,7 @@ class ToOptionalSpec extends Specification {
         Some(11d), Some(List(Message(Some("dfd"), Some(23))))
       )
   }
+
   "convert domain with Functor fields direct" >> {
     from(ListDomain(11d, List(Domain("dfd", 23))))
       .toOptional[ListMessageDirect] must_== ListMessageDirect(
@@ -40,9 +41,29 @@ class ToOptionalSpec extends Specification {
       )
   }
 
+  "convert domain with Functor fields with complex item type" >> {
+    from(ListMixedDomain(11d, List(DomainWithOptionalB("dfd", Some(23)))))
+      .toOptional[ListMixedMessage] must_== ListMixedMessage(
+        Some(11d), List(Message(Some("dfd"), Some(23)))
+      )
+  }
+
   "convert to Message with required fields" >> {
     from(DomainWithAllFieldsRequired("a", List(1))).toOptional[MessageWithRequiredField] must_==
       MessageWithRequiredField(Some("a"), List(1))
+  }
+
+  "convert to Message with mixed fields" >> {
+    from(DomainWithMixedField("a", List(1), Some(1d))).toOptional[MessageWithMixedField] must_==
+      MessageWithMixedField(Some("a"), List(1), Some(1d))
+  }
+
+  "convert to Message with deep nested field" >> {
+    from(NestedGrand("a", NestedParent("b", NestedChild("c")))).toOptional[NestedGrandMsg] must_==
+      NestedGrandMsg(Some("a"), Some(
+        NestedParentMsg(Some("b"), Some(NestedChildMsg(Some("c"))))
+      ))
+
   }
 
 }

@@ -14,6 +14,9 @@ object TestDomain {
   case class ListMessageDirect(a: Option[Double], children: List[Message])
   case class ListDomain(a: Double, children: List[Domain])
 
+  case class ListMixedMessage(a: Option[Double], children: List[Message])
+  case class ListMixedDomain(a: Double, children: List[DomainWithOptionalB])
+
   case class MessageMissingB(a: Option[String])
   case class Domain(a: String, b: Int)
   case class DomainWithOptionalB(a: String, b: Option[Int])
@@ -23,5 +26,16 @@ object TestDomain {
 
   case class MessageWithRequiredField(a: Option[String], b: List[Int])
   case class DomainWithAllFieldsRequired(a: String, b: List[Int])
+
+  case class MessageWithMixedField(a: Option[String], b: List[Int], c: Option[Double])
+  case class DomainWithMixedField(a: String, b: List[Int], c: Option[Double])
+
+  case class NestedGrand(name: String, child: NestedParent)
+  case class NestedParent(name: String, child: NestedChild)
+  case class NestedChild(name: String)
+
+  case class NestedGrandMsg(name: Option[String], child: Option[NestedParentMsg])
+  case class NestedParentMsg(name: Option[String], child: Option[NestedChildMsg])
+  case class NestedChildMsg(name: Option[String])
 
 }

@@ -57,5 +57,12 @@ class ValidateFromOptionalSpec extends Specification {
     validate(MessageWithRequiredA("a", Some(1))).to[Domain] must_==
       Validated.Valid(Domain("a", 1))
   }
+
+  "translate with deep nested side" >> {
+    validate(NestedGrandMsg(Some("a"), Some(
+      NestedParentMsg(Some("b"), Some(NestedChildMsg(Some("c"))))
+    ))).to[NestedGrand] must_==
+      Validated.Valid(NestedGrand("a", NestedParent("b", NestedChild("c"))))
+  }
 }
 
