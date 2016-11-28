@@ -11,7 +11,7 @@ import ValidateFromOptional.Result
 
 import scala.annotation.implicitNotFound
 
-@implicitNotFound("Cannot build conversion from ${From} to ${To}, possibly due to missing fields in ${From} or missing cats instances (`Traverse` instances are needed to convert fields in containers)")
+@implicitNotFound("Cannot build validate function from ${From} to ${To}, possibly due to missing fields in ${From} or missing cats instances (`Traverse` instances are needed to convert fields in containers)")
 trait ValidateFromOptional[From, To] {
   def apply(from: From): Result[To]
 }
@@ -72,21 +72,22 @@ trait MkValidateFromOptional1 extends MkValidateFromOptional2 {
       Validated.Valid(field[K](selector(from)))
     }
   }
+
+  implicit def mkFromIdentity[V]: ValidateFromOptional[V, V] = new ValidateFromOptional[V, V] {
+    def apply(from: V): Result[V] = {
+      Validated.Valid(from)
+    }
+  }
 }
 
 trait MkValidateFromOptional2 extends MkValidateFromOptional3 {
-  implicit def mkSingleTraverseValidateFromOptional[FL <: HList, K <: Symbol, TV, FV, F[_]](
+  implicit def mkSingleTraverseValidateFromOptional[TV, V, F[_]](
     implicit
     F: Traverse[F],
-    selector: Lazy[Selector.Aux[FL, K, Option[F[FV]]]],
-    k: Witness.Aux[K],
-    c: Lazy[ValidateFromOptional[FV, TV]]
-  ): ValidateFromOptional[FL, FieldType[K, F[TV]]] = new ValidateFromOptional[FL, FieldType[K, F[TV]]] {
-    def apply(from: FL): Result[FieldType[K, F[TV]]] = {
-      selector.value(from).fold[Result[FieldType[K, F[TV]]]](missingField) { v ⇒
-        F.traverse(v)(vv ⇒ c.value(vv)).map(field[K](_))
-      }
-    }
+    c: Lazy[ValidateFromOptional[V, TV]]
+  ): ValidateFromOptional[F[V], F[TV]] = new ValidateFromOptional[F[V], F[TV]] {
+    def apply(from: F[V]): Result[F[TV]] =
+      F.traverse(from)(vv ⇒ c.value(vv))
   }
 }
 
@@ -101,6 +102,17 @@ trait MkValidateFromOptional3 extends MkValidateFromOptional4 {
       selector.value(from).fold[Result[FieldType[K, TV]]](missingField) { v ⇒
         c.value(v).map(field[K](_))
       }
+    }
+  }
+
+  implicit def mkSingleRecursiveValidateDirectFromOptional[FL <: HList, K <: Symbol, TV, FV](
+    implicit
+    selector: Lazy[Selector.Aux[FL, K, FV]],
+    k: Witness.Aux[K],
+    c: Lazy[ValidateFromOptional[FV, TV]]
+  ): ValidateFromOptional[FL, FieldType[K, TV]] = new ValidateFromOptional[FL, FieldType[K, TV]] {
+    def apply(from: FL): Result[FieldType[K, TV]] = {
+      c.value(selector.value(from)).map(field[K](_))
     }
   }
 }

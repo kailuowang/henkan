@@ -43,10 +43,19 @@ class ValidateFromOptionalSpec extends Specification {
       missingFields("b")
   }
 
-  "translate instance with nested list fields" >> {
+  "translate instance with nested optional list fields" >> {
     validate(ListMessage(Some(1d), Some(List(Message(Some("a"), Some(1)))))).to[ListDomain] must_==
       Validated.Valid(ListDomain(1d, List(Domain("a", 1))))
   }
 
+  "translate instance with nested list fields" >> {
+    validate(ListMessageDirect(Some(1d), List(Message(Some("a"), Some(1))))).to[ListDomain] must_==
+      Validated.Valid(ListDomain(1d, List(Domain("a", 1))))
+  }
+
+  "translate with required fields on both side" >> {
+    validate(MessageWithRequiredA("a", Some(1))).to[Domain] must_==
+      Validated.Valid(Domain("a", 1))
+  }
 }
 
