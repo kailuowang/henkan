@@ -33,6 +33,12 @@ class ToOptionalSpec extends Specification {
         Some(11d), Some(List(Message(Some("dfd"), Some(23))))
       )
   }
+  "convert domain with Functor fields direct" >> {
+    from(ListDomain(11d, List(Domain("dfd", 23))))
+      .toOptional[ListMessageDirect] must_== ListMessageDirect(
+        Some(11d), List(Message(Some("dfd"), Some(23)))
+      )
+  }
 
   "convert to Message with required fields" >> {
     from(DomainWithAllFieldsRequired("a", List(1))).toOptional[MessageWithRequiredField] must_==
