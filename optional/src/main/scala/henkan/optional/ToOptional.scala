@@ -30,10 +30,10 @@ trait MkToOptional extends MkToOptional0 {
     implicit
     genFrom: LabelledGeneric.Aux[From, FL],
     genTo: LabelledGeneric.Aux[To, TL],
-    convertHList: ToOptional[FL, TL]
+    convertHList: Lazy[ToOptional[FL, TL]]
   ) = new ToOptional[From, To] {
     def apply(from: From): To = {
-      genTo.from(convertHList(genFrom.to(from)))
+      genTo.from(convertHList.value(genFrom.to(from)))
     }
   }
 
