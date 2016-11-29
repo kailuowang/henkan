@@ -63,7 +63,13 @@ class ToOptionalSpec extends Specification {
       NestedGrandMsg(Some("a"), Some(
         NestedParentMsg(Some("b"), Some(NestedChildMsg(Some("c"))))
       ))
+  }
 
+  "convert to Message with list of deep nested item" >> {
+    from(ListNested("l", Some(1), List(NestedGrand("a", NestedParent("b", NestedChild("c")))), Some(Domain("a", 2)))).toOptional[ListNestedMsg] must_==
+      ListNestedMsg(Some("l"), Some(1), List(NestedGrandMsg(Some("a"), Some(
+        NestedParentMsg(Some("b"), Some(NestedChildMsg(Some("c"))))
+      ))), Some(Message(Some("a"), Some(2))))
   }
 
 }

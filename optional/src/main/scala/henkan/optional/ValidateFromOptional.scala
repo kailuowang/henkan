@@ -1,6 +1,6 @@
 package henkan.optional
 
-import cats.{Traverse, Functor}
+import cats.{Traverse}
 import cats.data._
 import shapeless.labelled._
 import shapeless._
