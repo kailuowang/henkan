@@ -57,7 +57,8 @@ limitations under the License.
 
 3. `henkan.k` building blocks for generic function compositions.
 
-4. `henkan.optional` conversion between case classes with optional fields and case class with required fields.
+4. `henkan.optional` conversion between case classes with optional fields and case class with required fields. One of the use cases for such conversions is conversion between scalaPB generated classes where most fields are Options and internal case classes where you have required fields.
+
 
 ## Get started 
 
@@ -168,7 +169,7 @@ You can validate an instance of `Message` to a Validated `Domain`
 ```tut:silent
 import cats.data.Validated
 import cats.implicits._
-import henkan.optional.syntax.fromOptional._
+import henkan.optional.all._
 ```
 
 ```tut
@@ -188,10 +189,6 @@ validate(MessageWithMissingField(Some("a"))).to[Domain]
 ```
 
 You can convert in the opposite direction as well
-```tut:silent
-import henkan.optional.syntax.toOptional._
-```
-
 ```tut
 from(Domain("a", 2)).toOptional[Message]
 ```
@@ -205,7 +202,9 @@ case class DomainWithMissingField(a: String)
 from(DomainWithMissingField("a")).toOptional[Message]
 ```
 
-`cats.optional` supports nested case classes as well.
+`henkan.optional` supports nested case classes as well.
+
+Note that if you are converting scalaPB generated case class, it generates `Seq` for repeated items, although the underlying implementation is actually List. `henkan.optional.all` has a `Traverse` instance for `Seq` but only works fine when the underlying implementation is either a `List` or `Vector`
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 

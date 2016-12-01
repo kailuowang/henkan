@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 import cats.implicits._
 import TestDomain._
 import shapeless.test.illTyped
-import syntax.fromOptional._
+import all._
 
 class ValidateFromOptionalSpec extends Specification {
 
