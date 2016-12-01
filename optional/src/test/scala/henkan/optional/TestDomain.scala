@@ -10,9 +10,9 @@ object TestDomain {
   case class ParentMessage(a: Option[Double], child: Option[Message])
   case class ParentDomain(a: Double, child: Domain)
 
-  case class ListMessage(a: Option[Double], children: Option[List[Message]])
-  case class ListMessageDirect(a: Option[Double], children: List[Message])
-  case class ListDomain(a: Double, children: List[Domain])
+  case class ListMessage(a: Option[Double], children: Option[Seq[Message]])
+  case class ListMessageDirect(a: Option[Double], children: Seq[Message])
+  case class ListDomain(a: Double, children: Seq[Domain])
 
   case class ListMixedMessage(a: Option[Double], children: List[Message])
   case class ListMixedDomain(a: Double, children: List[DomainWithOptionalB])

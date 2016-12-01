@@ -57,7 +57,8 @@ limitations under the License.
 
 3. `henkan.k` building blocks for generic function compositions.
 
-4. `henkan.optional` conversion between case classes with optional fields and case class with required fields.
+4. `henkan.optional` conversion between case classes with optional fields and case class with required fields. One of the use cases for such conversions is conversion between scalaPB generated classes where most fields are Options and internal case classes where you have required fields.
+
 
 ## Get started 
 
@@ -183,7 +184,7 @@ You can validate an instance of `Message` to a Validated `Domain`
 ```scala
 import cats.data.Validated
 import cats.implicits._
-import henkan.optional.syntax.fromOptional._
+import henkan.optional.all._
 ```
 
 ```scala
@@ -202,16 +203,12 @@ case class MessageWithMissingField(a: Option[String])
 
 ```scala
 scala> validate(MessageWithMissingField(Some("a"))).to[Domain]
-<console>:24: error: Cannot build conversion from MessageWithMissingField to Domain, possibly due to missing fields in MessageWithMissingField or missing cats instances (`Traverse` instances are needed to convert fields in containers)
+<console>:24: error: Cannot build validate function from MessageWithMissingField to Domain, possibly due to missing fields in MessageWithMissingField or missing cats instances (`Traverse` instances are needed to convert fields in containers)
        validate(MessageWithMissingField(Some("a"))).to[Domain]
                                                       ^
 ```
 
 You can convert in the opposite direction as well
-```scala
-import henkan.optional.syntax.toOptional._
-```
-
 ```scala
 scala> from(Domain("a", 2)).toOptional[Message]
 res4: Message = Message(Some(a),Some(2))
@@ -227,7 +224,9 @@ scala> from(DomainWithMissingField("a")).toOptional[Message]
 res5: Message = Message(Some(a),None)
 ```
 
-`cats.optional` supports nested case classes as well.
+`henkan.optional` supports nested case classes as well.
+
+Note that if you are converting scalaPB generated case class, it generates `Seq` for repeated items, although the underlying implementation is actually List. `henkan.optional.all` has a `Traverse` instance for `Seq` but only works fine when the underlying implementation is either a `List` or `Vector`
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
 

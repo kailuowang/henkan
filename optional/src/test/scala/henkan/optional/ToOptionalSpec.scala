@@ -3,7 +3,7 @@ package henkan.optional
 import org.specs2.mutable.Specification
 import cats.implicits._
 import TestDomain._
-import syntax.toOptional._
+import all._
 
 class ToOptionalSpec extends Specification {
 
