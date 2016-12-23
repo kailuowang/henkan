@@ -172,8 +172,9 @@ res3: Option[MyParent] = Some(MyParent(parent,MyClass(a,2)))
 
 ### Transform between case classes with optional field
 
-`cats.optional` provides some facility to transform between case classes with optional fields and ones with required fields.
-Suppose you have two case classes: `Message` whose fields are optional and `Domain` whose fields are required
+`henkan.optional` provides some facility to transform between case classes with optional fields and ones with required fields.
+Suppose you have two case classes: `Message` whose fields are optional and `Domain` whose fields are required. One use case for this 
+utility is when using scalaPB without required fields, you can create a set of domain model classes WITH required fields and use this facility to transform between the scalaPB generated case classes and your domain classes. Basically you can have two sets of data schemas encoded in case classes, a flexble one with every fields optional exposed as proto buf messages and an internal one with more stringent requirements.  
 
 ```scala
 case class Message(a: Option[String], b: Option[Int])
