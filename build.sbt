@@ -43,8 +43,8 @@ lazy val examples = project
 
 lazy val docs = project
   .dependsOn(extract, convert, k, optional)
-  .settings(compile <<= (compile in Compile).dependsOn(tut))
-  .settings(test <<= (test in Test).dependsOn(tut))
+  .settings(compile := (compile in Compile).dependsOn(tut).value)
+  .settings(test := (test in Test).dependsOn(tut).value)
   .settings(moduleName := "henkan-docs")
   .settings(Dependencies.settings:_*)
   .settings(tutSettings)

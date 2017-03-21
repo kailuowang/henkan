@@ -30,34 +30,43 @@ limitations under the License.
 
 ## Modules
 
-1. `henkan.convert` - transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
+### `henkan.convert`
+
+Transform between case classes, which minimize the need to manually using constructor to transform information from one case class to another.
 
   *Features*:
 
-  a. quick transformation when the source case class has all the fields the target case class has: e.g. `a.to[B]()`
+ 1. quick transformation when the source case class has all the fields the target case class has: e.g. `a.to[B]()`
 
-  b. supplement (if source case class doesn't have a field) or override field values. e.g. `a.to[B].set(foo = "bar")`
+ 2. supplement (if source case class doesn't have a field) or override field values. e.g. `a.to[B].set(foo = "bar")`
 
-  c. use the default values of the target case classes if needed
+ 3. use the default values of the target case classes if needed
 
-2. `henkan.extract` - transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
+### `henkan.extract`
+
+Transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
 
   *Features*:
 
-  a. transform any runtime data type to an arbitrary Monad of taget case class - you just need to provide some `FieldReader`s that can read primitive values out of the runtime data type given a field name.
+1. transform any runtime data type to an arbitrary Monad of taget case class - you just need to provide some `FieldReader`s that can read primitive values out of the runtime data type given a field name.
 
-  b. supports default value.
+2. supports default value.
 
-  c. support recursive case classes, i.e. case class that has case class fields.
+3. support recursive case classes, i.e. case class that has case class fields.
 
-  ### Known issues for this feature
+  *Known issues for this feature*
 
   * [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
 
 
-3. `henkan.k` building blocks for generic function compositions.
+### `henkan.k`
 
-4. `henkan.optional` conversion between case classes with optional fields and case class with required fields. One of the use cases for such conversions is conversion between scalaPB generated classes where most fields are Options and internal case classes where you have required fields.
+Building blocks for generic function compositions.
+
+### `henkan.optional`
+
+Conversion between case classes with optional fields and case class with required fields. One of the use cases for such conversions is conversion between scalaPB generated classes where most fields are Options and internal case classes where you have required fields.
+
 
 
 ## Get started 
@@ -92,7 +101,7 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 ```
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
-```tut
+```tut:book
 import henkan.convert.Syntax._
 
 employee.to[UnionMember]()
@@ -103,7 +112,7 @@ unionMember.to[Employee].set(salary = 60000.0)
 
 ```
 Missing fields will fail the compilation
-```tut
+```tut:book
 case class People(name: String, address: String)
 
 val people = People("John", "49 Wall St.")
@@ -151,7 +160,7 @@ implicit val fMap = myFieldReader[Map[String, Any]] // need this to recursively 
 
 Now you can extract any case classes with String or Int fields from the Map[String, Any] data
 
-```tut
+```tut:book
 extract[Option, MyParent](data)
 ```
 
@@ -172,7 +181,7 @@ import cats.implicits._
 import henkan.optional.all._
 ```
 
-```tut
+```tut:book
 validate(Message(Some("a"), Some(2))).to[Domain]
 
 validate(Message(Some("a"), None)).to[Domain]
@@ -189,7 +198,7 @@ validate(MessageWithMissingField(Some("a"))).to[Domain]
 ```
 
 You can convert in the opposite direction as well
-```tut
+```tut:book
 from(Domain("a", 2)).toOptional[Message]
 ```
 
