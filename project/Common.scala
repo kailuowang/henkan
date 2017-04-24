@@ -9,11 +9,8 @@ object Common {
       "-deprecation",
       "-unchecked",
 //      "-Xlog-implicits",
-      "-Xlint"
-    ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 12)) =>
-        Seq("-Ypartial-unification")
-      case _ => Seq()
-    })
+      "-Xlint",
+      "-Ypartial-unification"
+    )
   )
 }

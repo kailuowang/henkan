@@ -15,17 +15,9 @@ object Dependencies {
     "org.specs2" %% "specs2-mock" % Versions.specs2 % "test"
   )
 
-  val withKittens = Seq(
-    libraryDependencies ++= kittens ++ (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor < 12 =>
-        Seq(compilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.patch))
-      case _ => Seq()
-    })
-  )
-
   val commonSettings = Seq(
-    scalaVersion := "2.12.1",
-    crossScalaVersions := Seq( "2.11.8", scalaVersion.value),
+    scalaVersion := "2.12.2",
+    crossScalaVersions := Seq( "2.11.11", scalaVersion.value),
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       Resolver.bintrayRepo("scalaz", "releases")

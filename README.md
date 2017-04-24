@@ -124,7 +124,7 @@ val people = People("John", "49 Wall St.")
 ```
 ```scala
 scala> people.to[Employee]() //missing DoB
-<console>:20: error: 
+<console>:20: error:
     You have not provided enough arguments to convert from People to Employee.
     shapeless.HNil
 
@@ -134,7 +134,7 @@ scala> people.to[Employee]() //missing DoB
 Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:20: error: One or more fields in shapeless.::[shapeless.labelled.FieldType[shapeless.tag.@@[Symbol,String("salary")],Int],shapeless.HNil] is not in Employee
+<console>:20: error: One or more fields in shapeless.labelled.FieldType[Symbol @@ String("salary"),Int] :: shapeless.HNil is not in Employee
 error after rewriting to henkan.convert.Syntax.convert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
