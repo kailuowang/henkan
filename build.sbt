@@ -1,4 +1,6 @@
-lazy val libModuleSettings = Common.settings ++ Dependencies.settings ++ Publish.settings ++ Format.settings
+import sbtrelease.ReleaseStateTransformations._
+
+lazy val libModuleSettings = Common.settings ++ Dependencies.settings ++ publishSettings ++ Format.settings
 
 lazy val henkan = project.in(file("."))
   .settings(moduleName := "henkan-all")
@@ -51,3 +53,42 @@ lazy val docs = project
   .settings(tutScalacOptions ~= (_.filterNot(Set("-Ywarn-unused-import", "-Ywarn-dead-code"))))
   .settings(tutTargetDirectory := file("."))
   .settings(Common.noPublishing: _*)
+
+lazy val publishSettings = Seq(
+//  sonatypeProfileName := "kailuowang",
+  organization in ThisBuild := "com.kailuowang",
+  publishMavenStyle := true,
+  licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
+  homepage := Some(url("http://kailuowang.github.io/henkan")),
+  scmInfo := Some(ScmInfo(url("https://github.com/kailuowang/henkan"),
+    "git@github.com:kailuowang/henkan.git")),
+  pomIncludeRepository := { _ => false },
+  publishArtifact in Test := false,
+  publishMavenStyle := true,
+  releaseCrossBuild := true,
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+  pomExtra := (
+    <developers>
+      <developer>
+        <id>kailuowang</id>
+        <name>Kailuo Wang</name>
+        <email>kailuo.wang@gmail.com</email>
+      </developer>
+    </developers>
+    ),
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    publishArtifacts,
+    setNextVersion,
+    commitNextVersion,
+    ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+    pushChanges
+  )
+
+)
