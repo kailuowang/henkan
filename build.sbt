@@ -61,7 +61,7 @@ lazy val publishSettings = Seq(
   licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
   homepage := Some(url("http://kailuowang.github.io/henkan")),
   scmInfo := Some(ScmInfo(url("https://github.com/kailuowang/henkan"),
-    "git@github.com:kailuowang/henkan.git")),
+    "git@github.com:kailuowang/henkan.git", Some("git@github.com:kailuowang/henkan.git"))),
   pomIncludeRepository := { _ => false },
   publishArtifact in Test := false,
   publishMavenStyle := true,
