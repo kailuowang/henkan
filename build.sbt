@@ -56,7 +56,7 @@ lazy val docs = project
 
 lazy val publishSettings = Seq(
 //  sonatypeProfileName := "kailuowang",
-  organization in ThisBuild := "us.kwang",
+  organization in ThisBuild := "com.iheart",
   publishMavenStyle := true,
   licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
   homepage := Some(url("http://kailuowang.github.io/henkan")),
