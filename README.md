@@ -72,15 +72,14 @@ Conversion between case classes with optional fields and case class with require
 ## Get started 
 
 ```scala
- resolvers += Resolver.bintrayRepo("kailuowang", "maven")
 
- libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.10"
 
- libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.10"
 
- libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.10"
 
- libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.2.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.2.10"
 ```
 
 ## Examples
