@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[ ![Download](https://api.bintray.com/packages/kailuowang/maven/henkan-convert/images/download.svg) ](https://bintray.com/kailuowang/maven/henkan-convert/_latestVersion)
 [![Coverage Status](https://coveralls.io/repos/github/kailuowang/henkan/badge.svg?branch=master)](https://coveralls.io/github/kailuowang/henkan?branch=master)
-
+[![Latest version](https://index.scala-lang.org/kailuowang/henkan/henkan-convert/latest.svg?color=orange)](https://index.scala-lang.org/kailuowang/henkan/henkan-optional)
 # Henkan [変換]
 
 A small library for converting between case classes. 
