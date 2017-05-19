@@ -4,7 +4,7 @@
 
 # Henkan [変換]
 
-A small library to experiment generic functional programming with [kittens][kittens], [shapeless][shapeless] and [cats][cats].
+A small library for converting between case classes. 
 
 
 ## Contributors and participation
@@ -42,26 +42,6 @@ Transform between case classes, which minimize the need to manually using constr
 
  3. use the default values of the target case classes if needed
 
-### `henkan.extract`
-
-Transform between a runtime data type and a case class. Usually this type of transformation is done either manually or through some macro generated transformers. Using shapeless can achieve this as well, henkan is providing a generic transformer library on top of shapeless, which minimizes the boilerplate needed. However this part is also experimental and, as of now, limited than the macro solution.
-
-  *Features*:
-
-1. transform any runtime data type to an arbitrary Monad of taget case class - you just need to provide some `FieldReader`s that can read primitive values out of the runtime data type given a field name.
-
-2. supports default value.
-
-3. support recursive case classes, i.e. case class that has case class fields.
-
-  *Known issues for this feature*
-
-  * [Error when the last field is a nested class](https://github.com/kailuowang/henkan/issues/15)
-
-
-### `henkan.k`
-
-Building blocks for generic function compositions.
 
 ### `henkan.optional`
 
@@ -73,11 +53,7 @@ Conversion between case classes with optional fields and case class with require
 
 ```scala
 
- libraryDependencies += "com.kailuowang" %% "henkan-extract" % "0.2.10"
-
- libraryDependencies += "com.kailuowang" %% "henkan-k" % "0.2.10"
-
- libraryDependencies += "com.kailuowang" %% "henkan-covert" % "0.2.10"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.2.10"
 
  libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.2.10"
 ```
@@ -126,42 +102,6 @@ unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than 
 
 ```
 
-
-### Transform between runtime data types and case class
-
-Suppose you have some case classes
-```tut:silent:reset
-case class MyClass(foo: String, bar: Int)
-
-case class MyParent(foo1: String, child: MyClass)
-```
-And you want to transform them from a Map[String, Any]
-```tut:silent
-val data = Map[String, Any]("foo1" → "parent", "child" → Map[String, Any]("foo" → "a", "bar" → 2))
-```
-
-Then first lets write some primitive readers. Note that it 's you that dictate the source type `Map[String, Any]` and High kinded container type `Option`
-
-```tut:silent
-import cats.implicits._
-import scala.util.Try
-import henkan.extractor._
-
-def safeCast[T](t: Any): Option[T] = Try(t.asInstanceOf[T]).toOption
-
-def myFieldReader[T] = FieldReader { (m: Map[String, Any], field: String) ⇒
-  m.get(field).flatMap(safeCast[T])
-}
-implicit val fint = myFieldReader[Int]
-implicit val fString = myFieldReader[String]
-implicit val fMap = myFieldReader[Map[String, Any]] // need this to recursively extract case classes
-```
-
-Now you can extract any case classes with String or Int fields from the Map[String, Any] data
-
-```tut:book
-extract[Option, MyParent](data)
-```
 
 ### Transform between case classes with optional field
 
