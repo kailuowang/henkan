@@ -52,9 +52,9 @@ Conversion between case classes with optional fields and case class with require
 
 ```scala
 
- libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.2.10"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.3.0"
 
- libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.2.10"
+ libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.3.0"
 ```
 
 ## Examples
