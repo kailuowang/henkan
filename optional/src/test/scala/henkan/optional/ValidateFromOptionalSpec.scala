@@ -2,7 +2,6 @@ package henkan.optional
 
 import cats.data.{ValidatedNel, NonEmptyList, Validated}
 import org.specs2.mutable.Specification
-import cats.implicits._
 import TestDomain._
 import shapeless.test.illTyped
 import all._
