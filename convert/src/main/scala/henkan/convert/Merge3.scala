@@ -4,8 +4,8 @@ import shapeless._, shapeless.ops.record._
 import shapeless.labelled._
 
 /**
- * Merge 3 records to the form of [[Out]], the sequence represents the priority,
- * fields not present in [[Out]] are discarded.
+ * Merge 3 records to the form of `Out`, the sequence represents the priority,
+ * fields not present in `Out` are discarded.
  * @tparam A
  * @tparam B
  * @tparam C
