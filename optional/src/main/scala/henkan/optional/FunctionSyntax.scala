@@ -1,7 +1,6 @@
 package henkan.optional
 
-import cats.arrow.FunctionK
-import cats.{Functor, ApplicativeError}
+import cats.Functor
 import cats.data.NonEmptyList
 import syntax.all._
 

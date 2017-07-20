@@ -4,24 +4,14 @@ lazy val libModuleSettings = Common.settings ++ Dependencies.settings ++ publish
 
 lazy val henkan = project.in(file("."))
   .settings(moduleName := "henkan-all")
-  .aggregate(extract, convert, k, examples, docs)
+  .aggregate(convert, optional, examples, docs)
   .settings(Common.settings:_*)
   .settings(Common.noPublishing: _*)
-
-lazy val extract = project
-  .settings(moduleName := "henkan-extract")
-  .settings(libModuleSettings:_*)
-  .settings(Dependencies.withKittens:_*)
 
 lazy val convert = project
   .settings(moduleName := "henkan-convert")
   .settings(libModuleSettings:_*)
   .settings(libraryDependencies ++= Dependencies.shapeless)
-
-lazy val k = project
-  .settings(moduleName := "henkan-k")
-  .settings(Dependencies.withKittens:_*)
-  .settings(libModuleSettings:_*)
 
 
 lazy val optional = project
@@ -31,8 +21,8 @@ lazy val optional = project
 
 
 lazy val examples = project
-  .dependsOn(extract, convert, k, optional)
-  .aggregate(extract, convert, k, optional)
+  .dependsOn(convert, optional)
+  .aggregate(convert, optional)
   .settings(moduleName := "henkan-examples")
   .settings(Common.settings:_*)
   .settings(Dependencies.settings:_*)
@@ -44,7 +34,7 @@ lazy val examples = project
   )
 
 lazy val docs = project
-  .dependsOn(extract, convert, k, optional)
+  .dependsOn(convert,optional)
   .settings(compile := (compile in Compile).dependsOn(tut).value)
   .settings(test := (test in Test).dependsOn(tut).value)
   .settings(moduleName := "henkan-docs")

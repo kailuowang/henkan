@@ -8,7 +8,7 @@ object Dependencies {
 
   val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.2")
 
-  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M9")
+  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M10")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
@@ -16,21 +16,16 @@ object Dependencies {
   )
 
   val withKittens = Seq(
-    libraryDependencies ++= kittens ++ (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor < 12 =>
-        Seq(compilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.patch))
-      case _ => Seq()
-    })
+    libraryDependencies ++= kittens
   )
 
   val commonSettings = Seq(
-    scalaVersion := "2.12.1",
-    crossScalaVersions := Seq( "2.11.8", scalaVersion.value),
+    scalaVersion := "2.12.2",
+    crossScalaVersions := Seq( "2.11.11", scalaVersion.value),
     resolvers ++= Seq(
-      Resolver.sonatypeRepo("releases"),
-      Resolver.bintrayRepo("scalaz", "releases")
+      Resolver.sonatypeRepo("releases")
     ),
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
   )
 
   val settings = commonSettings ++ Seq(

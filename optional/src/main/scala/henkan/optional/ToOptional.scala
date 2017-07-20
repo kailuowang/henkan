@@ -77,11 +77,10 @@ trait MkToOptional1 extends MkToOptional2 {
 
 trait MkToOptional2 extends MkToOptional3 {
 
-  implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol, TV, FV, F[_]](
+  implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV, F[_]](
     implicit
     F: Functor[F],
     selector: Lazy[Selector.Aux[FL, K, F[FV]]],
-    k: Witness.Aux[K],
     c: Lazy[ToOptional[FV, TV]]
   ): ToOptional[FL, FieldType[K, F[TV]]] = new ToOptional[FL, FieldType[K, F[TV]]] {
     def apply(from: FL): FieldType[K, F[TV]] = {
@@ -92,10 +91,9 @@ trait MkToOptional2 extends MkToOptional3 {
 }
 
 trait MkToOptional3 extends MkToOptional4 {
-  implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol, TV, FV](
+  implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, FV]],
-    k: Witness.Aux[K],
     c: Lazy[ToOptional[FV, TV]]
   ): ToOptional[FL, FieldType[K, Option[TV]]] = new ToOptional[FL, FieldType[K, Option[TV]]] {
     def apply(from: FL): FieldType[K, Option[TV]] = {
@@ -104,19 +102,16 @@ trait MkToOptional3 extends MkToOptional4 {
     }
   }
 
-  implicit def mkSingleRecursiveFieldToOptional[FL <: HList, K <: Symbol, TV, FV](
+  implicit def mkSingleRecursiveFieldToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
-    selector: Lazy[Selector.Aux[FL, K, FV]],
-    k: Witness.Aux[K],
     c: Lazy[ToOptional[FL, FieldType[K, TV]]]
   ): ToOptional[FL, FieldType[K, Option[TV]]] = mapField(c.value)(Option(_))
 }
 
 trait MkToOptional4 extends MkToOption5 {
-  implicit def mkSingleToOptional[FL <: HList, K <: Symbol, V](
+  implicit def mkSingleToOptional[FL <: HList, K <: Symbol: Witness.Aux, V](
     implicit
-    selector: Selector.Aux[FL, K, V],
-    k: Witness.Aux[K]
+    selector: Selector.Aux[FL, K, V]
   ): ToOptional[FL, FieldType[K, Option[V]]] = new ToOptional[FL, FieldType[K, Option[V]]] {
     def apply(from: FL): FieldType[K, Option[V]] = {
       field[K](Some(selector(from)))

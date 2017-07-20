@@ -105,10 +105,9 @@ trait MkValidateFromOptional3 extends MkValidateFromOptional4 {
     }
   }
 
-  implicit def mkSingleRecursiveValidateDirectFromOptional[FL <: HList, K <: Symbol, TV, FV](
+  implicit def mkSingleRecursiveValidateDirectFromOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, FV]],
-    k: Witness.Aux[K],
     c: Lazy[ValidateFromOptional[FV, TV]]
   ): ValidateFromOptional[FL, FieldType[K, TV]] = new ValidateFromOptional[FL, FieldType[K, TV]] {
     def apply(from: FL): Result[FieldType[K, TV]] = {

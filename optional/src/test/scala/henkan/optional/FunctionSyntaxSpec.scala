@@ -1,6 +1,5 @@
 package henkan.optional
 
-import cats.{Applicative, ApplicativeError}
 import org.specs2.mutable.Specification
 import cats.implicits._
 import TestDomain._

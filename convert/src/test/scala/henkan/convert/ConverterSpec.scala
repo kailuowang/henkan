@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 import henkan.convert.Syntax._
 import org.specs2.mutable.Specification
-import shapeless._, ops.record._, labelled._, record._
+import shapeless._, record._
 
 import shapeless.test.illTyped
 
