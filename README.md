@@ -5,28 +5,6 @@
 
 A small library for converting between case classes. 
 
-
-## Contributors and participation
-
-henkan is currently maintained by [Kailuo Wang][kailuowang].
-
-The henkan project supports the [Typelevel][typelevel] [code of conduct][typelevel-coc]
-and wants all of its channels (Gitter, GitHub, etc.) to be welcoming environments for
-everyone.
-
-## License
-
-henkan is licensed under the [Apache License, Version 2.0][apache2]
-(the "License"); you may not use this software except in compliance with
-the License.
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-
 ## Modules
 
 ### `henkan.convert`
@@ -47,8 +25,7 @@ Transform between case classes, which minimize the need to manually using constr
 Conversion between case classes with optional fields and case class with required fields. One of the use cases for such conversions is conversion between scalaPB generated classes where most fields are Options and internal case classes where you have required fields.
 
 
-
-## Get started 
+## Get started
 
 ```scala
 
@@ -175,6 +152,29 @@ res5: Message = Message(Some(a),None)
 Note that if you are converting scalaPB generated case class, it generates `Seq` for repeated items, although the underlying implementation is actually List. `henkan.optional.all` has a `Traverse` instance for `Seq` but only works fine when the underlying implementation is either a `List` or `Vector`
 
 ### Other examples can be found in [examples](examples/src/main/scala/henkan/) including a typesafe config transformer
+
+## Contributors and participation
+
+henkan is currently maintained by [Kailuo Wang][kailuowang].
+
+Any form of contribution (issue report, PR, etc) is more than welcome.
+
+The henkan project supports the [Typelevel][typelevel] [code of conduct][typelevel-coc]
+and wants all of its channels (Gitter, GitHub, etc.) to be welcoming environments for
+everyone.
+
+## License
+
+henkan is licensed under the [Apache License, Version 2.0][apache2]
+(the "License"); you may not use this software except in compliance with
+the License.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang
