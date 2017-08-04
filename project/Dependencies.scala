@@ -8,7 +8,7 @@ object Dependencies {
 
   val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.2")
 
-  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M10")
+  val kittens = Seq("org.typelevel" %% "kittens" % "1.0.0-M11")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
@@ -20,7 +20,7 @@ object Dependencies {
   )
 
   val commonSettings = Seq(
-    scalaVersion := "2.12.2",
+    scalaVersion := "2.12.3",
     crossScalaVersions := Seq( "2.11.11", scalaVersion.value),
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases")
