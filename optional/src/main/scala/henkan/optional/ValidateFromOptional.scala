@@ -58,7 +58,7 @@ trait MkValidateFromOptional0 extends MkValidateFromOptional1 {
   ): ValidateFromOptional[FL, FieldType[K, V] :: TL] = new ValidateFromOptional[FL, FieldType[K, V] :: TL] {
 
     def apply(from: FL): Result[FieldType[K, V] :: TL] = {
-      (headConvert(from), tailConvert(from)).map2(_ :: _)
+      (headConvert(from), tailConvert(from)).mapN(_ :: _)
     }
   }
 }
