@@ -21,7 +21,7 @@ trait FunctionSyntax {
 
   def autoOptional[OptionalA, OptionalB] = new autoOptionalPartial[OptionalA, OptionalB]
 
-  implicit class toOptionalOps[A, F[_]: Functor, B](f: A ⇒ F[B]) {
+  implicit class henkanOptionalOps[A, F[_]: Functor, B](f: A ⇒ F[B]) {
     def toOptional[OptionalA, OptionalB](
       whenMissing: NonEmptyList[RequiredFieldMissing] ⇒ F[OptionalB]
     )(

@@ -30,7 +30,7 @@ object Converter {
 
 trait Syntax {
 
-  implicit class convert[InT <: Product](in: InT) {
+  implicit class henkanSyntaxConvert[InT <: Product](in: InT) {
     class ConvertTo[OutT] {
       object set extends RecordArgs {
         def applyRecord[R <: HList](rec: R)(
