@@ -43,6 +43,8 @@ trait Syntax {
     }
     def to[OutT] = new ConvertTo[OutT]
   }
+
+  def convert[InT <: Product](in: InT) = henkanSyntaxConvert(in)
 }
 
 object Syntax extends Syntax
