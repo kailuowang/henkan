@@ -66,20 +66,6 @@ lazy val publishSettings = Seq(
         <email>kailuo.wang@gmail.com</email>
       </developer>
     </developers>
-    ),
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    ReleaseStep(action = Command.process("publishSigned", _), enableCrossBuild = true),
-    setNextVersion,
-    commitNextVersion,
-    ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
-    pushChanges
-  )
+    )
 
 )
