@@ -5,8 +5,9 @@ lazy val libModuleSettings = Common.settings ++ Dependencies.settings ++ publish
 lazy val henkan = project.in(file("."))
   .settings(moduleName := "henkan-all")
   .aggregate(convert, optional, examples, docs)
-  .settings(Common.settings:_*)
-  .settings(Common.noPublishing: _*)
+  .settings(Common.settings)
+  .settings(Dependencies.commonSettings)
+  .settings(Common.noPublishing)
 
 lazy val convert = project
   .settings(moduleName := "henkan-convert")
@@ -16,19 +17,19 @@ lazy val convert = project
 
 lazy val optional = project
   .settings(moduleName := "henkan-optional")
-  .settings(Dependencies.withKittens:_*)
-  .settings(libModuleSettings:_*)
+  .settings(Dependencies.withKittens)
+  .settings(libModuleSettings)
 
 
 lazy val examples = project
   .dependsOn(convert, optional)
   .aggregate(convert, optional)
   .settings(moduleName := "henkan-examples")
-  .settings(Common.settings:_*)
-  .settings(Dependencies.settings:_*)
-  .settings(Dependencies.withKittens:_*)
-  .settings(Common.noPublishing: _*)
-  .settings(Format.settings:_*)
+  .settings(Common.settings)
+  .settings(Dependencies.settings)
+  .settings(Dependencies.withKittens)
+  .settings(Common.noPublishing)
+  .settings(Format.settings)
   .settings(
     libraryDependencies += "com.typesafe" % "config" % "1.3.0"
   )
@@ -38,11 +39,11 @@ lazy val docs = project
   .settings(compile := (compile in Compile).dependsOn(tut).value)
   .settings(test := (test in Test).dependsOn(tut).value)
   .settings(moduleName := "henkan-docs")
-  .settings(Dependencies.settings:_*)
+  .settings(Dependencies.settings)
   .settings(tutSettings)
   .settings(tutScalacOptions ~= (_.filterNot(Set("-Ywarn-unused-import", "-Ywarn-dead-code"))))
   .settings(tutTargetDirectory := file("."))
-  .settings(Common.noPublishing: _*)
+  .settings(Common.noPublishing)
 
 lazy val publishSettings = Seq(
 //  sonatypeProfileName := "kailuowang",
