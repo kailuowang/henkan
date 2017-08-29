@@ -78,6 +78,6 @@ lazy val publishSettings = Seq(
     publishArtifacts,
     setNextVersion,
     commitNextVersion,
-    ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
+    ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
     pushChanges)
 )
