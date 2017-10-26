@@ -6,6 +6,7 @@ lazy val henkan = project.in(file("."))
   .settings(moduleName := "henkan-all")
   .aggregate(convert, optional, examples, docs)
   .settings(Common.settings)
+  .settings(releaseCrossBuild := true)
   .settings(Dependencies.commonSettings)
   .settings(Common.noPublishing)
 
