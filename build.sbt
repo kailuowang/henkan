@@ -18,7 +18,7 @@ lazy val convert = project
 
 lazy val optional = project
   .settings(moduleName := "henkan-optional")
-  .settings(Dependencies.withKittens)
+  .settings(libraryDependencies ++= Dependencies.shapeless ++ Dependencies.cats)
   .settings(libModuleSettings)
 
 
@@ -28,7 +28,6 @@ lazy val examples = project
   .settings(moduleName := "henkan-examples")
   .settings(Common.settings)
   .settings(Dependencies.settings)
-  .settings(Dependencies.withKittens)
   .settings(Common.noPublishing)
   .settings(Format.settings)
   .settings(
