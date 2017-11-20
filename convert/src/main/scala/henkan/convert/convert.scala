@@ -1,8 +1,3 @@
-/**
- * Adapted from @joprice
- * https://gist.github.com/joprice/c9f9c42fe0e99c9ada87
- */
-
 package henkan.convert
 import shapeless._
 
