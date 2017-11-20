@@ -154,6 +154,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+## Special Thanks
+
+The `convert` was originally adapted from this [gist](https://github.com/kailuowang/henkan/edit/master/docs/src/main/tut/README.md) 
+by @joprice. 
 
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang
@@ -162,3 +166,5 @@ limitations under the License.
 [kittens]: http://github.com/milessabin/kittens
 [shapeless]: http://github.com/milessabin/shapeless
 [cats]: http://github.com/typelevel/cats
+
+
