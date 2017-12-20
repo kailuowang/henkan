@@ -7,7 +7,7 @@ object Dependencies {
   }
 
   val shapeless = Seq("com.chuusai" %% "shapeless" % "2.3.2")
-  val cats = Seq("org.typelevel" %% "cats-core" % "1.0.0-RC1")
+  val cats = Seq("org.typelevel" %% "cats-core" % "1.0.0-RC2")
 
   val test = Seq(
     "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
