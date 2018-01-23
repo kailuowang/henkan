@@ -30,7 +30,6 @@ trait Syntax {
       object set extends RecordArgs {
         def applyRecord[R <: HList](rec: R)(
           implicit
-          checkFields: CheckFields[R, OutT],
           c: Converter[R, InT, OutT]
         ): OutT = c(rec, in)
       }
