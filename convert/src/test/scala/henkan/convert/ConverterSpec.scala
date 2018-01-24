@@ -154,8 +154,16 @@ class ConverterSpec extends Specification {
     val now = LocalDateTime.now
     val f = Foo("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f)
 
-    //this should compile
     illTyped { """ f.to[Foo2].set(bar21 = 4) """ }
+
     f.to[Foo2].set(bar21 = "big") === Foo2("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "big")
+
+    f.to[Foo2].set(
+      bar21 = "big",
+      bar1 = "cba",
+      bar2 = 2,
+      bar3 = false,
+      bar5 = List("dfd")
+    ) === Foo2("cba", 2, false, now, List("dfd"), Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "big")
   }
 }
