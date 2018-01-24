@@ -85,7 +85,10 @@ scala> people.to[Employee]() //missing DoB
 Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:20: error: One or more fields in shapeless.labelled.FieldType[Symbol @@ String("salary"),Int] :: shapeless.HNil is not in Employee
+<console>:20: error:
+    You have not provided enough arguments to convert from UnionMember to Employee.
+    shapeless.labelled.FieldType[Symbol @@ String("salary"),Int] :: shapeless.HNil
+
 error after rewriting to henkan.convert.Syntax.henkanSyntaxConvert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
 possible cause: maybe a wrong Dynamic method signature?
        unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
@@ -175,6 +178,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+## Special Thanks
+
+The `convert` was originally adapted from this [gist](https://github.com/kailuowang/henkan/edit/master/docs/src/main/tut/README.md) 
+by @joprice. 
 
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang
@@ -183,3 +190,5 @@ limitations under the License.
 [kittens]: http://github.com/milessabin/kittens
 [shapeless]: http://github.com/milessabin/shapeless
 [cats]: http://github.com/typelevel/cats
+
+
