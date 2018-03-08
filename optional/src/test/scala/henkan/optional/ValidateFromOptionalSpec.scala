@@ -63,5 +63,11 @@ class ValidateFromOptionalSpec extends Specification {
     ))).to[NestedGrand] must_==
       Validated.Valid(NestedGrand("a", NestedParent("b", NestedChild("c"))))
   }
+
+  "validate from Foo with one Nested field" >> {
+    validate(FooMessage(Some(Foo("")), Some(2))).to[FooDomain] must_==
+      Validated.Valid(FooDomain(Foo(""), 2))
+
+  }
 }
 
