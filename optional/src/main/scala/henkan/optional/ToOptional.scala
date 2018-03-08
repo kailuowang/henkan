@@ -24,21 +24,6 @@ trait ToOptionalSyntax {
 }
 
 trait MkToOptional extends MkToOptional0 {
-
-  implicit def mkGenToOptional[From, To, FL <: HList, TL <: HList](
-    implicit
-    genFrom: LabelledGeneric.Aux[From, FL],
-    genTo: LabelledGeneric.Aux[To, TL],
-    convertHList: Lazy[ToOptional[FL, TL]]
-  ) = new ToOptional[From, To] {
-    def apply(from: From): To = {
-      genTo.from(convertHList.value(genFrom.to(from)))
-    }
-  }
-
-}
-
-trait MkToOptional0 extends MkToOptional1 {
   implicit def mkNilToOptional[FL <: HList]: ToOptional[FL, HNil] = new ToOptional[FL, HNil] {
     def apply(from: FL): HNil = HNil
   }
@@ -61,9 +46,10 @@ trait MkToOptional0 extends MkToOptional1 {
     def apply(from: FL): FieldType[K, V] =
       field[K](selector(from))
   }
+
 }
 
-trait MkToOptional1 extends MkToOptional2 {
+trait MkToOptional0 extends MkToOptional1 {
   implicit def mkSingleOptionalToOptional[FL <: HList, K, V](
     implicit
     selector: Selector.Aux[FL, K, Option[V]]
@@ -75,8 +61,7 @@ trait MkToOptional1 extends MkToOptional2 {
 
 }
 
-trait MkToOptional2 extends MkToOptional3 {
-
+trait MkToOptional1 extends MkToOptional2 {
   implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV, F[_]](
     implicit
     F: Functor[F],
@@ -88,9 +73,11 @@ trait MkToOptional2 extends MkToOptional3 {
       field[K](v.map(c.value.apply))
     }
   }
+
 }
 
-trait MkToOptional3 extends MkToOptional4 {
+trait MkToOptional2 extends MkToOptional3 {
+
   implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, FV]],
@@ -106,9 +93,10 @@ trait MkToOptional3 extends MkToOptional4 {
     implicit
     c: Lazy[ToOptional[FL, FieldType[K, TV]]]
   ): ToOptional[FL, FieldType[K, Option[TV]]] = mapField(c.value)(Option(_))
+
 }
 
-trait MkToOptional4 extends MkToOption5 {
+trait MkToOptional3 extends MkToOptional4 {
   implicit def mkSingleToOptional[FL <: HList, K <: Symbol: Witness.Aux, V](
     implicit
     selector: Selector.Aux[FL, K, V]
@@ -119,7 +107,8 @@ trait MkToOptional4 extends MkToOption5 {
   }
 }
 
-trait MkToOption5 {
+trait MkToOptional4 extends MkToOption5 {
+
   implicit def mkSingleMissingToOptional[FL <: HList, K, V]: ToOptional[FL, FieldType[K, Option[V]]] = new ToOptional[FL, FieldType[K, Option[V]]] {
     def apply(from: FL): FieldType[K, Option[V]] =
       field[K](None)
@@ -127,6 +116,20 @@ trait MkToOption5 {
 
   protected def mapField[FL <: HList, K, A, B](o: ToOptional[FL, FieldType[K, A]])(f: A ⇒ B): ToOptional[FL, FieldType[K, B]] = new ToOptional[FL, FieldType[K, B]] {
     override def apply(from: FL): FieldType[K, B] = field[K](f(o(from)))
+  }
+}
+
+trait MkToOption5 {
+
+  implicit def mkGenToOptional[From, To, FL <: HList, TL <: HList](
+    implicit
+    genFrom: LabelledGeneric.Aux[From, FL],
+    genTo: LabelledGeneric.Aux[To, TL],
+    convertHList: Lazy[ToOptional[FL, TL]]
+  ) = new ToOptional[From, To] {
+    def apply(from: From): To = {
+      genTo.from(convertHList.value(genFrom.to(from)))
+    }
   }
 
 }

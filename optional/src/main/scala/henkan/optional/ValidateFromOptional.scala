@@ -31,22 +31,7 @@ trait ValidateFromOptionalSyntax {
 
 case class RequiredFieldMissing(fieldName: String)
 
-trait MkValidateFromOptional extends MkValidateFromOptional0 {
-
-  implicit def mkGenValidateFromOptional[From, To, FL <: HList, TL <: HList](
-    implicit
-    genFrom: LabelledGeneric.Aux[From, FL],
-    genTo: LabelledGeneric.Aux[To, TL],
-    convertHList: Lazy[ValidateFromOptional[FL, TL]]
-  ) = new ValidateFromOptional[From, To] {
-    def apply(from: From): ValidatedNel[RequiredFieldMissing, To] = {
-      convertHList.value(genFrom.to(from)).map(genTo.from)
-    }
-  }
-
-}
-
-trait MkValidateFromOptional0 extends MkValidateFromOptional1 {
+private[optional] abstract class MkValidateFromOptional extends MkValidateFromOptional0 {
   implicit def mkNilValidateFromOptional[FL <: HList]: ValidateFromOptional[FL, HNil] = new ValidateFromOptional[FL, HNil] {
     def apply(from: FL): Result[HNil] = Validated.Valid(HNil)
   }
@@ -61,9 +46,10 @@ trait MkValidateFromOptional0 extends MkValidateFromOptional1 {
       (headConvert(from), tailConvert(from)).mapN(_ :: _)
     }
   }
+
 }
 
-trait MkValidateFromOptional1 extends MkValidateFromOptional2 {
+private[optional] abstract class MkValidateFromOptional0 extends MkValidateFromOptional1 {
   implicit def mkSingleOptionalValidateFromOptional[FL <: HList, K, V](
     implicit
     selector: Selector.Aux[FL, K, Option[V]]
@@ -80,7 +66,7 @@ trait MkValidateFromOptional1 extends MkValidateFromOptional2 {
   }
 }
 
-trait MkValidateFromOptional2 extends MkValidateFromOptional3 {
+private[optional] abstract class MkValidateFromOptional1 extends MkValidateFromOptional2 {
   implicit def mkSingleTraverseValidateFromOptional[TV, V, F[_]](
     implicit
     F: Traverse[F],
@@ -91,7 +77,7 @@ trait MkValidateFromOptional2 extends MkValidateFromOptional3 {
   }
 }
 
-trait MkValidateFromOptional3 extends MkValidateFromOptional4 {
+private[optional] abstract class MkValidateFromOptional2 extends MkValidateFromOptional3 {
   implicit def mkSingleRecursiveValidateFromOptional[FL <: HList, K <: Symbol, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, Option[FV]]],
@@ -116,7 +102,7 @@ trait MkValidateFromOptional3 extends MkValidateFromOptional4 {
   }
 }
 
-trait MkValidateFromOptional4 {
+private[optional] abstract class MkValidateFromOptional3 extends MkValidateFromOptional4 {
   def missingField[T, K <: Symbol](implicit k: Witness.Aux[K]): Result[T] = Validated.invalidNel(RequiredFieldMissing(k.value.name))
 
   implicit def mkSingleValidateFromOptional[FL <: HList, K <: Symbol, V](
@@ -126,6 +112,21 @@ trait MkValidateFromOptional4 {
   ): ValidateFromOptional[FL, FieldType[K, V]] = new ValidateFromOptional[FL, FieldType[K, V]] {
     def apply(from: FL): Result[FieldType[K, V]] = {
       selector(from).fold[Result[FieldType[K, V]]](missingField)(v ⇒ Validated.Valid(field[K](v)))
+    }
+  }
+
+}
+
+private[optional] abstract class MkValidateFromOptional4 {
+
+  implicit def mkGenValidateFromOptional[From, To, FL <: HList, TL <: HList](
+    implicit
+    genFrom: LabelledGeneric.Aux[From, FL],
+    genTo: LabelledGeneric.Aux[To, TL],
+    convertHList: Lazy[ValidateFromOptional[FL, TL]]
+  ) = new ValidateFromOptional[From, To] {
+    def apply(from: From): ValidatedNel[RequiredFieldMissing, To] = {
+      convertHList.value(genFrom.to(from)).map(genTo.from)
     }
   }
 }

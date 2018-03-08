@@ -41,4 +41,7 @@ object TestDomain {
   case class ListNested(name: String, age: Option[Int], children: List[NestedGrand], child: Option[Domain])
   case class ListNestedMsg(name: Option[String], age: Option[Int], children: List[NestedGrandMsg], child: Option[Message])
 
+  case class Foo(bar: String)
+  case class FooMessage(a: Option[Foo], b: Option[Int])
+  case class FooDomain(a: Foo, b: Int)
 }
