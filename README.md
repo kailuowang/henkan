@@ -180,7 +180,7 @@ limitations under the License.
 
 ## Special Thanks
 
-The `convert` was originally adapted from this [gist](https://github.com/kailuowang/henkan/edit/master/docs/src/main/tut/README.md) 
+The `convert` was originally adapted from this [gist](https://gist.github.com/joprice/c9f9c42fe0e99c9ada87) 
 by @joprice. 
 
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
