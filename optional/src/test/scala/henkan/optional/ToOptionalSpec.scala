@@ -72,4 +72,9 @@ class ToOptionalSpec extends Specification {
       ))), Some(Message(Some("a"), Some(2))))
   }
 
+  "convert to Message with one Nested field" >> {
+    from(FooDomain(Foo(""), 2)).toOptional[FooMessage] must_==
+      FooMessage(Some(Foo("")), Some(2))
+
+  }
 }
