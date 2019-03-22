@@ -13,7 +13,7 @@ trait ToOptional[From, To] {
 
 }
 
-object ToOptional extends ToOptionalSyntax with MkToOptional
+object ToOptional extends MkToOptional with ToOptionalSyntax
 
 trait ToOptionalSyntax {
   final class fromPartial[From] private[optional] (f: From) {
@@ -23,7 +23,7 @@ trait ToOptionalSyntax {
   def from[From](f: From) = new fromPartial(f)
 }
 
-trait MkToOptional extends MkToOptional0 {
+private[optional] abstract class MkToOptional extends MkToOptional0 {
   implicit def mkNilToOptional[FL <: HList]: ToOptional[FL, HNil] = new ToOptional[FL, HNil] {
     def apply(from: FL): HNil = HNil
   }
@@ -49,7 +49,7 @@ trait MkToOptional extends MkToOptional0 {
 
 }
 
-trait MkToOptional0 extends MkToOptional1 {
+private[optional] abstract class MkToOptional0 extends MkToOptional1 {
   implicit def mkSingleOptionalToOptional[FL <: HList, K, V](
     implicit
     selector: Selector.Aux[FL, K, Option[V]]
@@ -61,7 +61,7 @@ trait MkToOptional0 extends MkToOptional1 {
 
 }
 
-trait MkToOptional1 extends MkToOptional2 {
+private[optional] abstract class MkToOptional1 extends MkToOptional2 {
   implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV, F[_]](
     implicit
     F: Functor[F],
@@ -76,7 +76,7 @@ trait MkToOptional1 extends MkToOptional2 {
 
 }
 
-trait MkToOptional2 extends MkToOptional3 {
+private[optional] abstract class MkToOptional2 extends MkToOptional2_1 {
 
   implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
@@ -88,7 +88,8 @@ trait MkToOptional2 extends MkToOptional3 {
       field[K](Some(c.value(v)))
     }
   }
-
+}
+private[optional] abstract class MkToOptional2_1 extends MkToOptional3 {
   implicit def mkSingleRecursiveFieldToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
     implicit
     c: Lazy[ToOptional[FL, FieldType[K, TV]]]
@@ -96,7 +97,7 @@ trait MkToOptional2 extends MkToOptional3 {
 
 }
 
-trait MkToOptional3 extends MkToOptional4 {
+private[optional] abstract class MkToOptional3 extends MkToOptional4 {
   implicit def mkSingleToOptional[FL <: HList, K <: Symbol: Witness.Aux, V](
     implicit
     selector: Selector.Aux[FL, K, V]
@@ -107,7 +108,7 @@ trait MkToOptional3 extends MkToOptional4 {
   }
 }
 
-trait MkToOptional4 extends MkToOption5 {
+private[optional] abstract class MkToOptional4 extends MkToOption5 {
 
   implicit def mkSingleMissingToOptional[FL <: HList, K, V]: ToOptional[FL, FieldType[K, Option[V]]] = new ToOptional[FL, FieldType[K, Option[V]]] {
     def apply(from: FL): FieldType[K, Option[V]] =
@@ -119,7 +120,7 @@ trait MkToOptional4 extends MkToOption5 {
   }
 }
 
-trait MkToOption5 {
+private[optional] abstract class MkToOption5 {
 
   implicit def mkGenToOptional[From, To, FL <: HList, TL <: HList](
     implicit
