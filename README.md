@@ -162,7 +162,7 @@ henkan is currently maintained by [Kailuo Wang][kailuowang].
 
 Any form of contribution (issue report, PR, etc) is more than welcome.
 
-The henkan project supports the [Typelevel][typelevel] [code of conduct][typelevel-coc]
+The henkan project follows the Scala [Code of Conduct][scala-coc]
 and wants all of its channels (Gitter, GitHub, etc.) to be welcoming environments for
 everyone.
 
@@ -186,7 +186,7 @@ by @joprice.
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang
 [typelevel]: http://typelevel.org/
-[typelevel-coc]: http://typelevel.org/conduct.html
+[scala-coc]: https://www.scala-lang.org/conduct/
 [kittens]: http://github.com/milessabin/kittens
 [shapeless]: http://github.com/milessabin/shapeless
 [cats]: http://github.com/typelevel/cats
