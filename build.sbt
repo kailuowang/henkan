@@ -1,83 +1,117 @@
-import sbtrelease.ReleaseStateTransformations._
+import com.typesafe.sbt.SbtGit.git
+import _root_.sbtcrossproject.CrossPlugin.autoImport.CrossType
+import microsites._
 
-lazy val libModuleSettings = Common.settings ++ Dependencies.settings ++ publishSettings ++ Format.settings
+lazy val libs = org.typelevel.libraries
 
-lazy val henkan = project.in(file("."))
-  .settings(moduleName := "henkan-all")
-  .aggregate(convert, optional, examples, docs)
-  .settings(Common.settings)
-  .settings(publishSettings)
-  .settings(Dependencies.commonSettings)
-  .settings(Common.noPublishing)
+val apache2 = "Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")
+val gh = GitHubSettings(org = "kailuowang", proj = "henkan", publishOrg = "com.kailuowang", license = apache2)
 
-lazy val convert = project
-  .settings(moduleName := "henkan-convert")
-  .settings(libModuleSettings:_*)
-  .settings(libraryDependencies ++= Dependencies.shapeless)
+lazy val rootSettings = buildSettings ++ commonSettings ++ publishSettings ++ scoverageSettings
+lazy val module = mkModuleFactory(gh.proj, mkConfig(rootSettings, commonJvmSettings, commonJsSettings))
+lazy val prj = mkPrjFactory(rootSettings)
+
+lazy val rootPrj = project
+  .configure(mkRootConfig(rootSettings,rootJVM))
+  .aggregate(rootJVM, rootJS, examples, docs)
+  .settings(
+    noPublishSettings,
+    crossScalaVersions := Nil
+  )
 
 
-lazy val optional = project
-  .settings(moduleName := "henkan-optional")
-  .settings(libraryDependencies ++= Dependencies.shapeless ++ Dependencies.cats)
-  .settings(libModuleSettings)
+lazy val rootJVM = project
+  .configure(mkRootJvmConfig(gh.proj, rootSettings, commonJvmSettings))
+  .aggregate(convertM.jvm, optionalM.jvm)
+  .settings(noPublishSettings,
+    crossScalaVersions := Nil)
+
+
+lazy val rootJS = project
+  .configure(mkRootJsConfig(gh.proj, rootSettings, commonJsSettings))
+  .aggregate(convertM.js, optionalM.js)
+  .settings(
+    noPublishSettings,
+    crossScalaVersions := Nil
+  )
+
+
+lazy val convert    = prj(convertM)
+lazy val convertM   = module("convert", CrossType.Pure)
+  .settings(libs.dependency("shapeless"),
+    libs.testDependencies("specs2-core", "specs2-mock"))
+  .jsSettings(
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5" % Test
+  )
+
+
+lazy val optional    = prj(optionalM)
+lazy val optionalM   = module("optional", CrossType.Pure)
+  .settings(libs.dependencies("shapeless", "cats-core"),
+    libs.testDependencies("specs2-core", "specs2-mock"))
 
 
 lazy val examples = project
   .dependsOn(convert, optional)
   .aggregate(convert, optional)
-  .settings(moduleName := "henkan-examples")
-  .settings(Common.settings)
-  .settings(Dependencies.settings)
-  .settings(Common.noPublishing)
-  .settings(Format.settings)
   .settings(
+    moduleName := "henkan-examples",
+    commonSettings,
+    noPublishSettings,
     libraryDependencies += "com.typesafe" % "config" % "1.3.0"
   )
 
 lazy val docs = project
-  .dependsOn(convert,optional)
-  .settings(compile := (compile in Compile).dependsOn(tut).value)
-  .settings(test := (test in Test).dependsOn(tut).value)
-  .settings(moduleName := "henkan-docs")
-  .settings(Dependencies.settings)
-  .settings(tutSettings)
-  .settings(tutScalacOptions ~= (_.filterNot(Set("-Ywarn-unused-import", "-Ywarn-dead-code"))))
-  .settings(tutTargetDirectory := file("."))
-  .settings(Common.noPublishing)
-
-lazy val publishSettings = Seq(
-//  sonatypeProfileName := "kailuowang",
-  organization in ThisBuild := "com.kailuowang",
-  publishMavenStyle := true,
-  licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-  homepage := Some(url("http://kailuowang.github.io/henkan")),
-  scmInfo := Some(ScmInfo(url("https://github.com/kailuowang/henkan"),
-    "git@github.com:kailuowang/henkan.git", Some("git@github.com:kailuowang/henkan.git"))),
-  pomIncludeRepository := { _ => false },
-  publishArtifact in Test := false,
-  publishMavenStyle := true,
-  releaseCrossBuild := true,
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  pomExtra := (
-    <developers>
-      <developer>
-        <id>kailuowang</id>
-        <name>Kailuo Wang</name>
-        <email>kailuo.wang@gmail.com</email>
-      </developer>
-    </developers>
+  .configure(mkDocConfig(gh, rootSettings, Nil, optional, convert))
+  .enablePlugins(MicrositesPlugin)
+  .enablePlugins(ScalaUnidocPlugin)
+  .settings(
+    crossScalaVersions := Seq(scalaVersion.value),
+    micrositeSettings(gh, devKai,  "Henkan"),
+    micrositeDocumentationUrl := "/thomas/api/com/iheart/thomas/index.html",
+    micrositeDocumentationLabelDescription := "API Documentation",
+    micrositeGithubOwner := "kailuowang",
+    micrositeExtraMdFiles := Map(
+      file("README.md") -> ExtraMdFileConfig(
+        "index.md",
+        "home",
+        Map("title" -> "Home", "section" -> "home", "position" -> "0")
+      )
     ),
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    publishArtifacts,
-    setNextVersion,
-    commitNextVersion,
-    ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
-    pushChanges)
+    micrositePalette := Map(
+      "brand-primary"     -> "#51839A",
+      "brand-secondary"   -> "#EDAF79",
+      "brand-tertiary"    -> "#96A694",
+      "gray-dark"         -> "#192946",
+      "gray"              -> "#424F67",
+      "gray-light"        -> "#E3E2E3",
+      "gray-lighter"      -> "#F4F3F4",
+      "white-color"       -> "#FFFFFF")
+  )
+
+
+lazy val devKai = Developer("Kailuo Wang", "@kailuowang", "kailuo.wang@gmail.com", new java.net.URL("http://kailuowang.com"))
+lazy val commonSettings = sharedCommonSettings ++ Seq(
+  parallelExecution in Test := false,
+  scalaVersion := libs.vers("scalac_2.12"),
+  crossScalaVersions := Seq(libs.vers("scalac_2.11"), scalaVersion.value, libs.vers("scalac_2.13")),
+  developers := List(devKai)) ++ scalacAllSettings ++ unidocCommonSettings ++ addCompilerPlugins(libs, "kind-projector") ++ Seq(
+    scalacOptions ++= (if(priorTo2_13(scalaVersion.value)) Nil else
+      Seq("-Ywarn-unused:-implicits"))
+    )
+
+
+lazy val buildSettings = sharedBuildSettings(gh, libs)
+
+lazy val commonJvmSettings = Seq()
+
+lazy val publishSettings = sharedPublishSettings(gh) ++ credentialSettings ++ sharedReleaseProcess
+
+lazy val scoverageSettings = sharedScoverageSettings(60)
+
+lazy val commonJsSettings = Seq(
+  scalaJSStage in Global := FastOptStage,
+  // currently sbt-doctest doesn't work in JS builds
+  // https://github.com/tkawachi/sbt-doctest/issues/52
+  doctestGenTests := Seq.empty
 )

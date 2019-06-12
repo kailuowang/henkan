@@ -18,5 +18,5 @@ abstract class MkContainsAll0 {
     implicit
     selector: Selector.Aux[L, K, V],
     CAT: ContainsAll[L, ST]
-  ): ContainsAll[L, FieldType[K, V] :: ST] = null
+  ): ContainsAll[L, FieldType[K, V] :: ST] = new ContainsAll[L, FieldType[K, V] :: ST] {}
 }

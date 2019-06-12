@@ -1,7 +1,8 @@
 language: scala
 
 scala:
-   - 2.12.7
+   - 2.12.8
+   - 2.13.0
    - 2.11.12
 
 jdk:
@@ -15,6 +16,7 @@ cache:
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION -jvm-opts .jvmopts clean coverage test
+  - sbt docs/makeMicrosite
 
 
 after_success:

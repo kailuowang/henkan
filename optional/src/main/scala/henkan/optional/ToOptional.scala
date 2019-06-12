@@ -115,7 +115,7 @@ private[optional] abstract class MkToOptional4 extends MkToOption5 {
       field[K](None)
   }
 
-  protected def mapField[FL <: HList, K, A, B](o: ToOptional[FL, FieldType[K, A]])(f: A ⇒ B): ToOptional[FL, FieldType[K, B]] = new ToOptional[FL, FieldType[K, B]] {
+  protected def mapField[FL <: HList, K, A, B](o: ToOptional[FL, FieldType[K, A]])(f: A => B): ToOptional[FL, FieldType[K, B]] = new ToOptional[FL, FieldType[K, B]] {
     override def apply(from: FL): FieldType[K, B] = field[K](f(o(from)))
   }
 }
