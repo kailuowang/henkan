@@ -63,30 +63,9 @@ lazy val examples = project
 
 lazy val docs = project
   .configure(mkDocConfig(gh, rootSettings, Nil, optional, convert))
-  .enablePlugins(MicrositesPlugin)
-  .enablePlugins(ScalaUnidocPlugin)
   .settings(
     crossScalaVersions := Seq(scalaVersion.value),
-    micrositeSettings(gh, devKai,  "Henkan"),
-    micrositeDocumentationUrl := "/thomas/api/com/iheart/thomas/index.html",
-    micrositeDocumentationLabelDescription := "API Documentation",
-    micrositeGithubOwner := "kailuowang",
-    micrositeExtraMdFiles := Map(
-      file("README.md") -> ExtraMdFileConfig(
-        "index.md",
-        "home",
-        Map("title" -> "Home", "section" -> "home", "position" -> "0")
-      )
-    ),
-    micrositePalette := Map(
-      "brand-primary"     -> "#51839A",
-      "brand-secondary"   -> "#EDAF79",
-      "brand-tertiary"    -> "#96A694",
-      "gray-dark"         -> "#192946",
-      "gray"              -> "#424F67",
-      "gray-light"        -> "#E3E2E3",
-      "gray-lighter"      -> "#F4F3F4",
-      "white-color"       -> "#FFFFFF")
+    tutTargetDirectory := file(".")
   )
 
 

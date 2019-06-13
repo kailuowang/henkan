@@ -39,7 +39,7 @@ Conversion between case classes with optional fields and case class with require
 ### Transform between case classes
 
 
-```scala
+```tut:silent
 import java.time.LocalDate
 
 case class Employee(name: String, address: String, dateOfBirth: LocalDate, salary: Double = 50000d)
@@ -52,47 +52,30 @@ val unionMember = UnionMember("Micheal", "41 Dunwoody St", LocalDate.of(1994, 7,
 ```
 
 Now use the henkan magic to transform between `UnionMember` and `Employee`
-```scala
+```tut:book
 import henkan.convert.Syntax._
-// import henkan.convert.Syntax._
 
 employee.to[UnionMember]()
-// res0: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
 
 unionMember.to[Employee]()
-// res1: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,50000.0)
 
 unionMember.to[Employee].set(salary = 60000.0)
-// res2: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,60000.0)
+
 ```
 Missing fields will fail the compilation
-```scala
+```tut:book
 case class People(name: String, address: String)
-// defined class People
 
 val people = People("John", "49 Wall St.")
-// people: People = People(John,49 Wall St.)
 ```
-```scala
-scala> people.to[Employee]() //missing DoB
-<console>:20: error: 
-    You have not provided enough arguments to convert from People to Employee.
-    shapeless.HNil
+```tut:fail
+people.to[Employee]() //missing DoB
 
-       people.to[Employee]() //missing DoB
-                          ^
 ```
 Wrong argument types will fail the compilation
-```scala
-scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:20: error: 
-    You have not provided enough arguments to convert from UnionMember to Employee.
-    shapeless.labelled.FieldType[Symbol @@ String("salary"),Int] :: shapeless.HNil
+```tut:fail
+unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
 
-error after rewriting to henkan.convert.Syntax.henkanSyntaxConvert[UnionMember](unionMember).to[Employee].set.applyDynamicNamed("apply")(scala.Tuple2("salary", 60))
-possible cause: maybe a wrong Dynamic method signature?
-       unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-                                   ^
 ```
 
 
@@ -101,53 +84,46 @@ possible cause: maybe a wrong Dynamic method signature?
 `cats.optional` provides some facility to transform between case classes with optional fields and ones with required fields.
 Suppose you have two case classes: `Message` whose fields are optional and `Domain` whose fields are required
 
-```scala
+```tut:silent:reset
 case class Message(a: Option[String], b: Option[Int])
 case class Domain(a: String, b: Int)
 ```
 You can validate an instance of `Message` to a Validated `Domain`
 
-```scala
+```tut:silent
 import cats.data.Validated
 import cats.implicits._
 import henkan.optional.all._
 ```
 
-```scala
+```tut:book
 validate(Message(Some("a"), Some(2))).to[Domain]
-// res0: henkan.optional.ValidateFromOptional.Result[Domain] = Valid(Domain(a,2))
 
 validate(Message(Some("a"), None)).to[Domain]
-// res1: henkan.optional.ValidateFromOptional.Result[Domain] = Invalid(NonEmptyList(RequiredFieldMissing(b)))
 ```
 
 The compilation will fail if the from case class doesn't have all fields the target case class needs
-```scala
+```tut:silent
 
 case class MessageWithMissingField(a: Option[String])
 ```
 
-```scala
-scala> validate(MessageWithMissingField(Some("a"))).to[Domain]
-<console>:24: error: Cannot build validate function from MessageWithMissingField to Domain, possibly due to missing fields in MessageWithMissingField or missing cats instances (`Traverse` instances are needed to convert fields in containers)
-       validate(MessageWithMissingField(Some("a"))).to[Domain]
-                                                      ^
+```tut:fail
+validate(MessageWithMissingField(Some("a"))).to[Domain]
 ```
 
 You can convert in the opposite direction as well
-```scala
+```tut:book
 from(Domain("a", 2)).toOptional[Message]
-// res3: Message = Message(Some(a),Some(2))
 ```
 
 Note that if you from case class does not have all the fields the target class has, they will be set as `None`
 
-```scala
+```tut:silent
 case class DomainWithMissingField(a: String)
 ```
-```scala
-scala> from(DomainWithMissingField("a")).toOptional[Message]
-res4: Message = Message(Some(a),None)
+```tut
+from(DomainWithMissingField("a")).toOptional[Message]
 ```
 
 `henkan.optional` supports nested case classes as well.

@@ -46,7 +46,7 @@ jobs:
 
     - env: TEST="docs"
       install: gem install jekyll -v 2.5
-      script: sbt docs/makeMicrosite
+      script: sbt docs/tut
 
 
 cache:
