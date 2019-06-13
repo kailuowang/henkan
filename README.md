@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Coverage Status](https://coveralls.io/repos/github/kailuowang/henkan/badge.svg?branch=master)](https://coveralls.io/github/kailuowang/henkan?branch=master)
+[![codecov](https://codecov.io/gh/kailuowang/henkan/branch/master/graph/badge.svg)](https://codecov.io/gh/kailuowang/henkan)
 [![Latest version](https://index.scala-lang.org/kailuowang/henkan/henkan-convert/latest.svg?color=orange)](https://index.scala-lang.org/kailuowang/henkan/henkan-optional)
 # Henkan [変換]
 
@@ -57,13 +57,13 @@ import henkan.convert.Syntax._
 // import henkan.convert.Syntax._
 
 employee.to[UnionMember]()
-// res4: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
+// res0: UnionMember = UnionMember(George,123 E 86 St,1963-03-12)
 
 unionMember.to[Employee]()
-// res5: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,50000.0)
+// res1: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,50000.0)
 
 unionMember.to[Employee].set(salary = 60000.0)
-// res6: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,60000.0)
+// res2: Employee = Employee(Micheal,41 Dunwoody St,1994-07-29,60000.0)
 ```
 Missing fields will fail the compilation
 ```scala
@@ -75,7 +75,7 @@ val people = People("John", "49 Wall St.")
 ```
 ```scala
 scala> people.to[Employee]() //missing DoB
-<console>:20: error:
+<console>:20: error: 
     You have not provided enough arguments to convert from People to Employee.
     shapeless.HNil
 
@@ -85,7 +85,7 @@ scala> people.to[Employee]() //missing DoB
 Wrong argument types will fail the compilation
 ```scala
 scala> unionMember.to[Employee].set(salary = 60) //salary was input as Int rather than Double
-<console>:20: error:
+<console>:20: error: 
     You have not provided enough arguments to convert from UnionMember to Employee.
     shapeless.labelled.FieldType[Symbol @@ String("salary"),Int] :: shapeless.HNil
 
@@ -137,7 +137,7 @@ scala> validate(MessageWithMissingField(Some("a"))).to[Domain]
 You can convert in the opposite direction as well
 ```scala
 from(Domain("a", 2)).toOptional[Message]
-// res4: Message = Message(Some(a),Some(2))
+// res3: Message = Message(Some(a),Some(2))
 ```
 
 Note that if you from case class does not have all the fields the target class has, they will be set as `None`
@@ -147,7 +147,7 @@ case class DomainWithMissingField(a: String)
 ```
 ```scala
 scala> from(DomainWithMissingField("a")).toOptional[Message]
-res5: Message = Message(Some(a),None)
+res4: Message = Message(Some(a),None)
 ```
 
 `henkan.optional` supports nested case classes as well.
@@ -180,8 +180,8 @@ limitations under the License.
 
 ## Special Thanks
 
-The `convert` was originally adapted from this [gist](https://gist.github.com/joprice/c9f9c42fe0e99c9ada87)  
-by @joprice.
+The `convert` was originally adapted from this [gist](https://github.com/kailuowang/henkan/edit/master/docs/src/main/tut/README.md) 
+by @joprice. 
 
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/kailuowang/henkan.svg)](https://travis-ci.org/kailuowang/henkan)
-[![Coverage Status](https://coveralls.io/repos/github/kailuowang/henkan/badge.svg?branch=master)](https://coveralls.io/github/kailuowang/henkan?branch=master)
+[![codecov](https://codecov.io/gh/kailuowang/henkan/branch/master/graph/badge.svg)](https://codecov.io/gh/kailuowang/henkan)
 [![Latest version](https://index.scala-lang.org/kailuowang/henkan/henkan-convert/latest.svg?color=orange)](https://index.scala-lang.org/kailuowang/henkan/henkan-optional)
 # Henkan [変換]
 

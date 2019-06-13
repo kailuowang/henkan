@@ -73,7 +73,7 @@ private[optional] abstract class MkValidateFromOptional1 extends MkValidateFromO
     c: Lazy[ValidateFromOptional[V, TV]]
   ): ValidateFromOptional[F[V], F[TV]] = new ValidateFromOptional[F[V], F[TV]] {
     def apply(from: F[V]): Result[F[TV]] =
-      F.traverse(from)(vv ⇒ c.value(vv))
+      F.traverse(from)(vv => c.value(vv))
   }
 }
 
@@ -85,7 +85,7 @@ private[optional] abstract class MkValidateFromOptional2 extends MkValidateFromO
     c: Lazy[ValidateFromOptional[FV, TV]]
   ): ValidateFromOptional[FL, FieldType[K, TV]] = new ValidateFromOptional[FL, FieldType[K, TV]] {
     def apply(from: FL): Result[FieldType[K, TV]] = {
-      selector.value(from).fold[Result[FieldType[K, TV]]](missingField) { v ⇒
+      selector.value(from).fold[Result[FieldType[K, TV]]](missingField) { v =>
         c.value(v).map(field[K](_))
       }
     }
@@ -111,7 +111,7 @@ private[optional] abstract class MkValidateFromOptional3 extends MkValidateFromO
     k: Witness.Aux[K]
   ): ValidateFromOptional[FL, FieldType[K, V]] = new ValidateFromOptional[FL, FieldType[K, V]] {
     def apply(from: FL): Result[FieldType[K, V]] = {
-      selector(from).fold[Result[FieldType[K, V]]](missingField)(v ⇒ Validated.Valid(field[K](v)))
+      selector(from).fold[Result[FieldType[K, V]]](missingField)(v => Validated.Valid(field[K](v)))
     }
   }
 

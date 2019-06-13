@@ -12,9 +12,9 @@ class FunctionSyntaxSpec extends Specification {
   """
 
   def wrapFunction = {
-    val f: Domain ⇒ Either[String, ParentDomain] = (d: Domain) ⇒ Right(ParentDomain(1d, d))
+    val f: Domain => Either[String, ParentDomain] = (d: Domain) => Right(ParentDomain(1d, d))
 
-    val fm = f.toOptional[Message, ParentMessage](es ⇒ Left("Missing fields: " + es.map(_.fieldName).toList.mkString(", ")))
+    val fm = f.toOptional[Message, ParentMessage](es => Left("Missing fields: " + es.map(_.fieldName).toList.mkString(", ")))
 
     fm(Message(Some("a"), Some(1))) must_== Right(ParentMessage(Some(1d), Some(Message(Some("a"), Some(1)))))
 

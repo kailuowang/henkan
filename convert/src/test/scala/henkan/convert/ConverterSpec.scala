@@ -1,10 +1,9 @@
 package henkan.convert
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 import henkan.convert.Syntax._
 import org.specs2.mutable.Specification
-import shapeless._, record._
 
 import shapeless.test.illTyped
 
@@ -109,7 +108,7 @@ class ConverterSpec extends Specification {
       bar1: String,
       bar2: Int,
       bar3: Boolean,
-      bar4: LocalDateTime,
+      bar4: LocalDate,
       bar5: List[String],
       bar6: Set[Boolean],
       bar7: Double,
@@ -119,7 +118,7 @@ class ConverterSpec extends Specification {
       bar11: String,
       bar12: Map[String, Int],
       bar13: Boolean,
-      bar14: LocalDateTime,
+      bar14: LocalDate,
       bar15: List[String],
       bar16: Set[Boolean],
       bar17: Double,
@@ -132,7 +131,7 @@ class ConverterSpec extends Specification {
       bar1: String,
       bar2: Int,
       bar3: Boolean,
-      bar4: LocalDateTime,
+      bar4: LocalDate,
       bar5: List[String],
       bar6: Set[Boolean],
       bar7: Double,
@@ -142,7 +141,7 @@ class ConverterSpec extends Specification {
       bar11: String,
       bar12: Map[String, Int],
       bar13: Boolean,
-      bar14: LocalDateTime,
+      bar14: LocalDate,
       bar15: List[String],
       bar16: Set[Boolean],
       bar17: Double,
@@ -151,12 +150,12 @@ class ConverterSpec extends Specification {
       bar20: Float,
       bar21: String
     )
-    val now = LocalDateTime.now
-    val f = Foo("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f)
+    val now = LocalDate.now
+    val f = Foo("abc", 3, true, now, Nil, Set.empty, 1d, 1L, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1L, '1', 1f)
 
     illTyped { """ f.to[Foo2].set(bar21 = 4) """ }
 
-    f.to[Foo2].set(bar21 = "big") === Foo2("abc", 3, true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "big")
+    f.to[Foo2].set(bar21 = "big") === Foo2("abc", 3, true, now, Nil, Set.empty, 1d, 1L, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1L, '1', 1f, "big")
 
     f.to[Foo2].set(
       bar21 = "big",
@@ -164,6 +163,6 @@ class ConverterSpec extends Specification {
       bar2 = 2,
       bar3 = false,
       bar5 = List("dfd")
-    ) === Foo2("cba", 2, false, now, List("dfd"), Set.empty, 1d, 1l, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1l, '1', 1f, "big")
+    ) === Foo2("cba", 2, false, now, List("dfd"), Set.empty, 1d, 1L, '1', 1f, "dfd", Map(), true, now, Nil, Set.empty, 1d, 1L, '1', 1f, "big")
   }
 }
