@@ -27,11 +27,13 @@ Conversion between case classes with optional fields and case class with require
 
 ## Get started
 
+Henkan is available on Scala 2.11, 2.12, 2.13 as well as Scala.js
+ 
 ```scala
 
- libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.6.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.6.4"
 
- libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.6.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.6.4"
 ```
 
 ## Examples
@@ -162,7 +164,7 @@ henkan is currently maintained by [Kailuo Wang][kailuowang].
 
 Any form of contribution (issue report, PR, etc) is more than welcome.
 
-The henkan project follows the Scala [Code of Conduct][scala-coc]
+The henkan project supports the [Typelevel][typelevel] [code of conduct][typelevel-coc]
 and wants all of its channels (Gitter, GitHub, etc.) to be welcoming environments for
 everyone.
 
@@ -186,7 +188,7 @@ by @joprice.
 [apache2]: http://www.apache.org/licenses/LICENSE-2.0
 [kailuowang]: http://twitter.com/kailuowang
 [typelevel]: http://typelevel.org/
-[scala-coc]: https://www.scala-lang.org/conduct/
+[typelevel-coc]: http://typelevel.org/conduct.html
 [kittens]: http://github.com/milessabin/kittens
 [shapeless]: http://github.com/milessabin/shapeless
 [cats]: http://github.com/typelevel/cats

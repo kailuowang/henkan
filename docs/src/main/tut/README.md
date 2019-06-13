@@ -27,11 +27,13 @@ Conversion between case classes with optional fields and case class with require
 
 ## Get started
 
+Henkan is available on Scala 2.11, 2.12, 2.13 as well as Scala.js
+ 
 ```scala
 
- libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.6.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-convert" % "0.6.4"
 
- libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.6.1"
+ libraryDependencies += "com.kailuowang" %% "henkan-optional" % "0.6.4"
 ```
 
 ## Examples
