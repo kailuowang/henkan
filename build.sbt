@@ -41,7 +41,7 @@ lazy val convertM   = module("convert", CrossType.Pure)
   .settings(libs.dependency("shapeless"),
     libs.testDependencies("specs2-core", "specs2-mock"))
   .jsSettings(
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5" % Test
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.6" % Test
   )
 
 
