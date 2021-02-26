@@ -16,7 +16,7 @@ object Dependencies {
 
   val commonSettings = Seq(
     scalaVersion := "2.12.7",
-    crossScalaVersions := Seq( "2.11.12", scalaVersion.value),
+    crossScalaVersions := Seq( "2.13.5", scalaVersion.value),
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases")
     ),
