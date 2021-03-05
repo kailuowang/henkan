@@ -13,7 +13,7 @@ lazy val prj = mkPrjFactory(rootSettings)
 
 lazy val rootPrj = project
   .configure(mkRootConfig(rootSettings,rootJVM))
-  .aggregate(rootJVM, rootJS, examples, docs)
+  .aggregate(rootJVM, rootJS, examples)
   .settings(
     noPublishSettings,
     crossScalaVersions := Nil
@@ -60,9 +60,6 @@ lazy val examples = project
     noPublishSettings,
     libraryDependencies += "com.typesafe" % "config" % "1.4.1"
   )
-
-lazy val docs = project
-  .configure(mkDocConfig(gh, rootSettings, Nil, optional, convert))
 
 
 lazy val devKai = Developer("Kailuo Wang", "@kailuowang", "kailuo.wang@gmail.com", new java.net.URL("http://kailuowang.com"))
