@@ -41,7 +41,7 @@ lazy val convertM   = module("convert", CrossType.Pure)
   .settings(libs.dependency("shapeless"),
     libs.testDependencies("specs2-core", "specs2-mock"))
   .jsSettings(
-    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5" % Test
+    libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "1.0.0" % Test
   )
 
 
@@ -58,7 +58,7 @@ lazy val examples = project
     moduleName := "henkan-examples",
     commonSettings,
     noPublishSettings,
-    libraryDependencies += "com.typesafe" % "config" % "1.3.4"
+    libraryDependencies += "com.typesafe" % "config" % "1.4.0"
   )
 
 lazy val docs = project
