@@ -63,9 +63,6 @@ lazy val examples = project
 
 lazy val docs = project
   .configure(mkDocConfig(gh, rootSettings, Nil, optional, convert))
-  .settings(
-    crossScalaVersions := Seq(scalaVersion.value),
-  )
 
 
 lazy val devKai = Developer("Kailuo Wang", "@kailuowang", "kailuo.wang@gmail.com", new java.net.URL("http://kailuowang.com"))
