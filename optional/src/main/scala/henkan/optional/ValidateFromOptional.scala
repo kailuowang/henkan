@@ -91,7 +91,7 @@ private[optional] abstract class MkValidateFromOptional2 extends MkValidateFromO
     }
   }
 
-  implicit def mkSingleRecursiveValidateDirectFromOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
+  implicit def mkSingleRecursiveValidateDirectFromOptional[FL <: HList, K <: Symbol, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, FV]],
     c: Lazy[ValidateFromOptional[FV, TV]]

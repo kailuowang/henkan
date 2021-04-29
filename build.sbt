@@ -64,10 +64,10 @@ lazy val examples = project
 
 lazy val devKai = Developer("Kailuo Wang", "@kailuowang", "kailuo.wang@gmail.com", new java.net.URL("http://kailuowang.com"))
 lazy val commonSettings = sharedCommonSettings ++ Seq(
-  parallelExecution in Test := false,
+  Test / parallelExecution := false,
   scalaVersion := libs.vers("scalac_2.12"),
   crossScalaVersions := Seq(scalaVersion.value, libs.vers("scalac_2.13")),
-  developers := List(devKai)) ++ scalacAllSettings ++ unidocCommonSettings ++ addCompilerPlugins(libs, "kind-projector") ++ Seq(
+  developers := List(devKai)) ++ unidocCommonSettings ++ addCompilerPlugins(libs, "kind-projector") ++ Seq(
     scalacOptions ++= (if(priorTo2_13(scalaVersion.value)) Nil else
       Seq("-Ywarn-unused:-implicits", "-Xlint:-byname-implicit")),
     )

@@ -14,6 +14,7 @@ object ContainsAll extends MkContainsAll0
 abstract class MkContainsAll0 {
   implicit def AllContainsNil[L <: HList]: ContainsAll[L, HNil] = new ContainsAll[L, HNil] {}
 
+  @annotation.nowarn
   implicit def ContainsCon[L <: HList, K, V, ST <: HList](
     implicit
     selector: Selector.Aux[L, K, V],

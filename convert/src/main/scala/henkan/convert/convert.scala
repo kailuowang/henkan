@@ -10,6 +10,7 @@ trait Converter[Args, In, Out] {
 }
 
 object Converter {
+  @annotation.nowarn
   implicit def makeConvertible[Args <: HList, In, RIn <: HList, Out, Defaults <: HList, ROut <: HList](
     implicit
     ingen: LabelledGeneric.Aux[In, RIn],
