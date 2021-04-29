@@ -62,7 +62,7 @@ private[optional] abstract class MkToOptional0 extends MkToOptional1 {
 }
 
 private[optional] abstract class MkToOptional1 extends MkToOptional2 {
-  implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV, F[_]](
+  implicit def mkSingleTraverseToOptional[FL <: HList, K <: Symbol, TV, FV, F[_]](
     implicit
     F: Functor[F],
     selector: Lazy[Selector.Aux[FL, K, F[FV]]],
@@ -78,7 +78,7 @@ private[optional] abstract class MkToOptional1 extends MkToOptional2 {
 
 private[optional] abstract class MkToOptional2 extends MkToOptional2_1 {
 
-  implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
+  implicit def mkSingleRecursiveToOptional[FL <: HList, K <: Symbol, TV, FV](
     implicit
     selector: Lazy[Selector.Aux[FL, K, FV]],
     c: Lazy[ToOptional[FV, TV]]
@@ -90,7 +90,7 @@ private[optional] abstract class MkToOptional2 extends MkToOptional2_1 {
   }
 }
 private[optional] abstract class MkToOptional2_1 extends MkToOptional3 {
-  implicit def mkSingleRecursiveFieldToOptional[FL <: HList, K <: Symbol: Witness.Aux, TV, FV](
+  implicit def mkSingleRecursiveFieldToOptional[FL <: HList, K <: Symbol, TV, FV](
     implicit
     c: Lazy[ToOptional[FL, FieldType[K, TV]]]
   ): ToOptional[FL, FieldType[K, Option[TV]]] = mapField(c.value)(Option(_))
@@ -98,7 +98,7 @@ private[optional] abstract class MkToOptional2_1 extends MkToOptional3 {
 }
 
 private[optional] abstract class MkToOptional3 extends MkToOptional4 {
-  implicit def mkSingleToOptional[FL <: HList, K <: Symbol: Witness.Aux, V](
+  implicit def mkSingleToOptional[FL <: HList, K <: Symbol, V](
     implicit
     selector: Selector.Aux[FL, K, V]
   ): ToOptional[FL, FieldType[K, Option[V]]] = new ToOptional[FL, FieldType[K, Option[V]]] {
