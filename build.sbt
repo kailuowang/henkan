@@ -58,7 +58,7 @@ lazy val examples = project
     moduleName := "henkan-examples",
     commonSettings,
     noPublishSettings,
-    libraryDependencies += "com.typesafe" % "config" % "1.4.1"
+    libraryDependencies += "com.typesafe" % "config" % "1.4.2"
   )
 
 
